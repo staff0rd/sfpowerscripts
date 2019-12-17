@@ -69,14 +69,15 @@ target.copy = function() {
 };
 
 target.incrementversion = function() {
-  console.log("incrementversion");
-
+ 
    //Reading current versions from manifest
    var manifestPath = path.join(__dirname, "vss-extension.json");
    var manifest = JSON.parse(fs.readFileSync(manifestPath));
 
 
-  console.log(options);
+  
+
+
   if (options.version) {
     if (options.version === "auto") {
       var ref = new Date(2000, 1, 1);
@@ -90,16 +91,18 @@ target.incrementversion = function() {
       );
       options.version = major + "." + minor + "." + patch;
     }
-    else if (options.version=='dev')
+    else if (options.version === "dev")
     {
+
+  
       //Treat patch as the build number, let major and minor be developer controlled
       var major = semver.major(manifest.version);
-      var minor = semver.major(manifest.minor);
-      var patch = semver.major(manifest.patch);
-
-      pitch+=1;
-
+      var minor = semver.minor(manifest.version);
+      var patch = semver.patch(manifest.version);
+      patch+=1;
       options.version = major + "." + minor + "." + patch;
+
+      
     }
 
     if (!semver.valid(options.version)) {
@@ -107,11 +110,13 @@ target.incrementversion = function() {
       process.exit(1);
     }
   }
+ 
 
   switch (options.stage) {
     case "dev":
       options.public = false;
       updateExtensionManifest(__dirname, options, false);
+      tl.updateBuildNumber(options.version);
       break;
     case "review":
       options.public = false;
@@ -121,7 +126,11 @@ target.incrementversion = function() {
     default:
       updateExtensionManifest(__dirname, options, true);
   }
+
+ 
 };
+
+
 
 target.publish = function() {
   console.log("publish: publish task");
@@ -173,6 +182,9 @@ target.publish = function() {
 };
 
 updateExtensionManifest = function(dir, options, isOriginalFile) {
+
+  console.log(`Setting Version to  ${options.version}`);
+
   var manifestPath = path.join(dir, "vss-extension.json");
   var manifest = JSON.parse(fs.readFileSync(manifestPath));
 
