@@ -14,7 +14,7 @@ stages:
   - job: StaticCodeAnalysis
     displayName: Static Code Analysis
     steps:
-    - task: sfpwowerscript-installsfdx-task@3
+    - task: sfpwowerscript-installsfdx-task@4
       displayName: Install SFDX
 
     - task: sfpwowerscript-validatedxunlockedpackage-task@2
@@ -36,7 +36,7 @@ stages:
   - job: UnitTest
     displayName: Unit Test
     steps:
-    - task: sfpwowerscript-installsfdx-task@3
+    - task: sfpwowerscript-installsfdx-task@4
       displayName: Install SFDX
       inputs:
         isTelemetryEnabled: true

@@ -1,6 +1,6 @@
 {
   "source": "userInterface",
-  "revision": 3,
+  "revision": 4,
   "description": null,
   "createdBy": "{}",
   "createdOn": "",
@@ -117,7 +117,7 @@
             {
               "environment": {},
               "taskId": "d8950cd3-2bf4-4b50-bb75-b9358f741951",
-              "version": "3.*",
+              "version": "4.*",
               "name": "Install SFDX",
               "refName": "",
               "enabled": true,
@@ -130,6 +130,7 @@
               "inputs": {
                 "sfdx_cli_version": "latest",
                 "sfpowerkit_version": "latest",
+                "plugins": "",
                 "isTelemetryEnabled": "true"
               }
             },

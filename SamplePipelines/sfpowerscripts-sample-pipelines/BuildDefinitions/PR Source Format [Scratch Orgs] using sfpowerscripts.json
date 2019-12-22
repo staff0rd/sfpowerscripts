@@ -48,12 +48,13 @@
             "condition": "succeeded()",
             "task": {
               "id": "d8950cd3-2bf4-4b50-bb75-b9358f741951",
-              "versionSpec": "3.*",
+              "versionSpec": "4.*",
               "definitionType": "task"
             },
             "inputs": {
               "sfdx_cli_version": "latest",
               "sfpowerkit_version": "latest",
+              "plugins": "",
               "isTelemetryEnabled": "true"
             }
           },
@@ -272,7 +273,7 @@
       "fetchDepth": "0",
       "gitLfsSupport": "false",
       "reportBuildStatus": "true",
-      "connectedServiceId": "$GitHub_87c816bb$",
+      "connectedServiceId": "$GitHub_73aeb2a3$",
       "skipSyncSource": "false",
       "labelSourcesFormat": "$(build.buildNumber)",
       "labelSources": "0"
@@ -307,7 +308,7 @@
   "path": "\\",
   "type": "build",
   "queueStatus": "enabled",
-  "revision": 7,
+  "revision": 8,
   "createdDate": "",
   "project": "{}"
 }

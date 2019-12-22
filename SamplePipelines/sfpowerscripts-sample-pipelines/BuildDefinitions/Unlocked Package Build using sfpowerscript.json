@@ -48,12 +48,13 @@
             "condition": "succeeded()",
             "task": {
               "id": "d8950cd3-2bf4-4b50-bb75-b9358f741951",
-              "versionSpec": "3.*",
+              "versionSpec": "4.*",
               "definitionType": "task"
             },
             "inputs": {
               "sfdx_cli_version": "latest",
               "sfpowerkit_version": "latest",
+              "plugins": "",
               "isTelemetryEnabled": "true"
             }
           },
@@ -93,15 +94,23 @@
             "refName": "build_package",
             "task": {
               "id": "f67abc38-a5b8-4196-946e-ba81df4cd57c",
-              "versionSpec": "2.*",
+              "versionSpec": "4.*",
               "definitionType": "task"
             },
             "inputs": {
               "segment": "BuildNumber",
               "set_build_number": "true",
-              "commit_changes": "true",
               "package": "",
               "project_directory": "",
+              "commit_changes": "true",
+              "pushchanges": "false",
+              "pushoption": "onSuccess",
+              "versionControlProvider": "github",
+              "github_connection": "",
+              "bitbucket_connection": "",
+              "github_enterprise_connection": "",
+              "username": "",
+              "password": "",
               "isTelemetryEnabled": "true"
             }
           },
@@ -165,7 +174,7 @@
       "fetchDepth": "0",
       "gitLfsSupport": "false",
       "reportBuildStatus": "true",
-      "connectedServiceId": "$GitHub_1d8eb760$",
+      "connectedServiceId": "$GitHub_ddda4dd5$",
       "skipSyncSource": "false",
       "labelSourcesFormat": "$(build.buildNumber)",
       "labelSources": "0"
@@ -200,7 +209,7 @@
   "path": "\\",
   "type": "build",
   "queueStatus": "enabled",
-  "revision": 5,
+  "revision": 6,
   "createdDate": "",
   "project": "{}"
 }
