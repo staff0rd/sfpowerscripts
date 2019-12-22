@@ -3,6 +3,10 @@ import child_process = require("child_process");
 import * as secureFilesCommon from "../Common/SecureFileHelpers";
 import { isNullOrUndefined } from "util";
 import { AppInsights } from "../Common/AppInsights";
+import fs = require("fs-extra");
+import path = require("path");
+const nanoid = require('nanoid')
+
 
 async function run() {
   try {
@@ -13,6 +17,18 @@ async function run() {
 
     AppInsights.setupAppInsights(tl.getBoolInput("isTelemetryEnabled",true));
     AppInsights.trackTask("sfpwowerscript-authenticateorg-task");
+
+
+    if (tl.getVariable("Agent.OS") == "Windows_NT") {
+    
+      tl.debug("Writing key.json");
+      let keyFilePath=path.join(process.env.USERPROFILE,'.sfdx','key.json');
+      let keyObj={};
+      keyObj["service"]="sfdx";
+      keyObj["account"]="local";
+      keyObj["key"]=nanoid(32);
+      fs.writeJSONSync(keyFilePath,keyObj);
+    }
 
     if (method == "JWT") {
       const jwt_key_file: string = tl.getInput("jwt_key_file", true);

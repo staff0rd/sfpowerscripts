@@ -6,6 +6,7 @@
     },
     "files": [
         "IncrementProjectBuildNumber.ts",
-        "IncrementProjectBuildNumberImpl.ts"
+        "IncrementProjectBuildNumberImpl.ts",
+        "PostIncrementProjectBuildNumber.ts"
     ]
   }
