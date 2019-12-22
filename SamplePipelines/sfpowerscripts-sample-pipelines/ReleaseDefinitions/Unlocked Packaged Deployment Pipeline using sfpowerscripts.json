@@ -163,7 +163,7 @@
             {
               "environment": {},
               "taskId": "7af1df5d-8a5a-4eaa-9df1-968393c43397",
-              "version": "5.*",
+              "version": "6.*",
               "name": "Install a version of  force-di to $(env.name) ",
               "refName": "",
               "enabled": true,
