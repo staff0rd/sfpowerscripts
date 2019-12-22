@@ -7,9 +7,9 @@
     "category": "Deploy",
     "author": "azlam.abdulsalam",
     "version": {
-        "Major": 5,
+        "Major": 6,
         "Minor": 0,
-        "Patch": 1
+        "Patch": 0
     },
     "runsOn": [
         "Agent"
@@ -54,7 +54,7 @@
         {
             "name": "artifact",
             "type": "string",
-            "label": "Name of the artifact that is attached to this release pipeline",
+            "label": "Name of the source alias of the artifact that is attached to this release pipeline",
             "required": false,
             "helpMarkDown": "Provide the name of the artifact which is the input to this pipeline. Please note only sfpowerkit based build artifact will work with this command",
             "visibleRule": "packageinstalledfrom = BuildArtifact"
