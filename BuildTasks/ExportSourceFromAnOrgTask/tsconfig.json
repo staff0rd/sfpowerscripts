@@ -5,8 +5,7 @@
         "sourceRoot": "./"
     },
     "files": [
-        "IncrementProjectBuildNumber.ts",
-        "IncrementProjectBuildNumberImpl.ts",
-        "PostIncrementProjectBuildNumber.ts"
+        "ExportSourceFromAnOrg.ts",
+        "ExportSourceFromAnOrgImpl.ts"
     ]
   }
