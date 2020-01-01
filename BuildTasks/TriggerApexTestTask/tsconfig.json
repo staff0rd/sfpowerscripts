@@ -6,6 +6,7 @@
     },
     "files": [
         "TriggerApexTest.ts",
-        "TriggerApexTestImpl.ts"
+        "TriggerApexTestImpl.ts",
+        "PostTriggerApexTest.ts"
     ]
   }

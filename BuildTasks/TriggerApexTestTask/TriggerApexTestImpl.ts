@@ -1,63 +1,52 @@
 import child_process = require("child_process");
 import { onExit } from "../Common/OnExit";
 
-
-
 export default class TriggerApexTestImpl {
+  public constructor(private target_org: string, private test_options: any) {}
 
-    public constructor(
-        private target_org: string,
-        private test_options: any
-      ) {}
-
-
-      public async exec(command:string):Promise<void>
-      {
-        let child=child_process.exec(command,  { encoding: "utf8" },(error,stdout,stderr)=>{
-
-          if(error)
-             throw error;
-        });
-       
-        child.stdout.on("data",data=>{console.log(data.toString()); });
-
-        await onExit(child);
-
+  public async exec(): Promise<void> {
+    
+    //Print Test in Human Reable Format and also store it in staging directory
+    let child = child_process.exec(
+      this.buildExecCommand(),
+      { encoding: "utf8" },
+      (error, stdout, stderr) => {
+        if (error) throw error;
       }
-  
-      public async buildExecCommand(): Promise<string> {
-       
-    
-        let command = `npx sfdx force:apex:test:run -u ${this.target_org}`;
-    
+    );
 
-        command += ` -c`;
-    
-        //output
-        command += ` -r human`;
-    
-        //testlevel
-        command += ` -l ${this.test_options["testlevel"]}`;
-    
-   
-        if (this.test_options["testlevel"] == "RunSpecifiedTests") {
-         
-          command += ` -t ${this.test_options["specified_tests"]}`;
+    child.stdout.on("data", data => {
+      console.log(data.toString());
+    });
 
-        } 
-        else if (this.test_options["testlevel"] == "RunApexTestSuite") {
-        
-          command += ` -s ${this.test_options["apextestsuite"]}`;
-        }
+    await onExit(child);
+  }
 
-         //wait
-         command += ` -w ${this.test_options["wait_time"]}`;
-    
-    
-         command += ` --verbose`;
+  private buildExecCommand(): string {
+    let command = `npx sfdx force:apex:test:run -u ${this.target_org}`;
 
-        return command;
-      }
-    
-     
+    if (this.test_options["synchronous"] == true) command += ` -y`;
+
+    command += ` -c`;
+
+    command += ` -r human`;
+    //wait time
+    command += ` -w  ${this.test_options["wait_time"]}`;
+
+    //store result
+    command += ` -d  ${this.test_options["outputdir"]}`;
+
+    //testlevel
+    command += ` -l ${this.test_options["testlevel"]}`;
+
+    if (this.test_options["testlevel"] == "RunSpecifiedTests") {
+      command += ` -t ${this.test_options["specified_tests"]}`;
+    } else if (this.test_options["testlevel"] == "RunApexTestSuite") {
+      command += ` -s ${this.test_options["apextestsuite"]}`;
+    }
+    console.log(`Generated Command: ${command}`);
+    return command;
+  }
+
+
 }
