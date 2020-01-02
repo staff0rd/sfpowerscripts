@@ -38,7 +38,7 @@ The changelog is available at [https://sfpowerscripts.com/changelog/](https://sf
 
 For eg: a Pull Request validation for an unlocked package  should feature the tasks in this order
 
-![PR Pipeline](https://user-images.githubusercontent.com/15088656/64956434-e990ff80-d8cd-11e9-98fd-44847dc29c42.png)
+![PR Pipeline](https://sfpowerscripts.com/images/PR%20Pipeline%20ScratchOrg.png)
 
  1. Install the SFDX CLI
  2. Validate the unlocked package for metadata coverage
@@ -46,18 +46,16 @@ For eg: a Pull Request validation for an unlocked package  should feature the ta
  4. Create a Scratch Org
  5. Install Package Dependencies in the target scratch org
  6. Deploy source to the target scratch org
- 7. Delete the scratch org
+ 7. Delete the scratch org ( optional :  Utilize post action on create scratch org task )
 
-- Most of the tasks are very thin wrappers aroud the equivalent sfdx cli commands or the open source sfpowerkit (SFDX CLI extension). Almost all parameters that are requred during a CI run is exposed. If you feel that is not enough for the task at hand, one can quickly fall back to command line parameterized just for the task
+* Most of the tasks are very thin wrappers aroud the equivalent sfdx cli commands or the open source sfpowerkit (SFDX CLI extension). Almost all parameters that are requred during a CI run is exposed. If you feel that is not enough for the task at hand, one can quickly fall back to command line parameterized just for the task
 
-- Though the tasks can all be utilized fully in build pipeline. It is recommended to utilize the Release Pipeline to deploy the artifact to make the full use of Azure Pipelines Capability.
+* Though the tasks can all be utilized fully in build pipeline. It is recommended to utilize the Release Pipeline to deploy the artifact to make the full use of Azure Pipelines Capability.
 
-## Getting Started
+#### Getting Started
 
- Checkout SFPowerscripts documentation here on how to [Get Started](https://sfpowerscripts.com/gettingstarted/) with these tasks. The [repo](https://github.com/azlamsalam/sfpowerscripts/tree/master/SamplePipelines)  also features  sample pipelines that demonstrate the usage of pipelines. 
+Checkout SFPowerscripts documentation here on how to [Get Started](https://sfpowerscripts.com/gettingstarted/) with these tasks. The [repo](https://github.com/azlamsalam/sfpowerscripts/tree/release/SamplePipelines) also features sample pipelines that demonstrate the usage of pipelines.
 
-
-## What if there is an issue with the extension?
+#### What if there is an issue with the extension?
 
 Please create an issue using the methods listed [here](https://sfpowerscripts.com/support/).
- 

@@ -52,13 +52,15 @@ stages:
         isdevhub: true
         isTelemetryEnabled: true
 
-    - task: sfpwowerscript-managescratchorg-task@4
+    - task: sfpwowerscript-managescratchorg-task@5
       displayName: Create a Scratch Org
       inputs:
         action: 'Create'
         config_file_path: 'config/default-scratch-def.json'
         alias: MyScratchOrg
         devhub_alias: DevHub
+        maintainorg: 'delete',
+        daystomanintain: 1,
         isTelemetryEnabled: true
 
     - task: sfpowerscript-deploysourcetoorg-task@3
@@ -86,13 +88,6 @@ stages:
         test_coverage: '90'
         isTelemetryEnabled: true
 
-    - task: sfpwowerscript-managescratchorg-task@4
-      displayName: Delete Scratch Org
-      condition: always()
-      inputs:
-        action: 'Delete'
-        target_org: MyScratchOrg
-        devhub_alias: DevHub
 
 - stage: CIPackageTest
   displayName: CI Package Test
