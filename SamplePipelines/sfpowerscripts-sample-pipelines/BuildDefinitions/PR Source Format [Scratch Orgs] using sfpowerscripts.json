@@ -189,7 +189,7 @@
             "condition": "succeeded()",
             "task": {
               "id": "2f57114d-c08b-4014-96d7-a8981a2dae9b",
-              "versionSpec": "2.*",
+              "versionSpec": "3.*",
               "definitionType": "task"
             },
             "inputs": {
@@ -197,6 +197,7 @@
               "testlevel": "RunLocalTests",
               "specified_tests": "",
               "apextestsuite": "",
+              "synchronous": "false",
               "wait_time": "60",
               "isTelemetryEnabled": "true"
             }

@@ -73,12 +73,13 @@ stages:
         testlevel: 'NoTestRun'
         isTelemetryEnabled: true
 
-    - task: sfpwowerscript-triggerapextest-task@2
+    - task: sfpwowerscript-triggerapextest-task@3
       displayName: Run Apex Unit Tests
       inputs:
         target_org: 'MyScratchOrg'
         testlevel: 'RunLocalTests'
-        wait_time: '60'
+        wait_time: '60',
+        synchronous: false
         isTelemetryEnabled: true
 
     - task: sfpwowerscript-validateapextestcoverage-task@2
