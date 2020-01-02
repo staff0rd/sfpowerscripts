@@ -7,9 +7,9 @@
     "category": "Build",
     "author": "azlam.abdulsalam",
     "version": {
-        "Major": 2,
+        "Major": 3,
         "Minor": 0,
-        "Patch": 1
+        "Patch": 17
     },
     "runsOn": [
         "Agent"
@@ -57,6 +57,14 @@
             "visibleRule": "testlevel = RunApexTestSuite"
         },
         {
+            "name": "synchronous",
+            "type": "boolean",
+            "label": "Run tests from a single class synchronously",
+            "defaultValue": false,
+            "helpMarkDown": "Select an option if the tests are to be run synchronously",
+            "required": false
+        },
+        {
             "name": "wait_time",
             "type": "string",
             "label": "Wait Time",
@@ -77,5 +85,11 @@
         "Node": {
             "target": "TriggerApexTestTask/TriggerApexTest.js"
         }
-    }
+    },
+    "postjobexecution": {
+        "Node": {
+          "target": "TriggerApexTestTask/PostTriggerApexTest.js",
+          "argumentFormat": ""
+        }
+      }
 }

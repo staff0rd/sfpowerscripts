@@ -6,6 +6,7 @@
     },
     "files": [
         "ManageScratchOrg.ts",
+        "PostManageScratchOrg.ts",
         "DeleteScratchOrgImpl.ts",
         "CreateScratchOrgImpl.ts"
     ]

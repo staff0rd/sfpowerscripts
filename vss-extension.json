@@ -3,7 +3,7 @@
     "id": "sfpowerscripts-dev",
     "publisher": "AzlamSalam",
     "name": "sfpowerscripts (dev)",
-    "version": "6.0.13",
+    "version": "7.0.3",
     "description": "Azure Pipelines tasks for working with Salesforce",
     "tags": [
         "Extension",
@@ -23,6 +23,17 @@
     "icons": {
         "default": "tools-icon.png"
     },
+    "screenshots": [
+        {
+            "path": "review_scratch_org.png"
+        },
+        {
+            "path": "trigger_apex_test.png"
+        },
+        {
+            "path": "pr_pipeline_scratchorg.png"
+        }
+    ],
     "public": false,
     "targets": [
         {
