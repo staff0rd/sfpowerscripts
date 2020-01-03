@@ -46,7 +46,7 @@
     ],
     "content": {
         "details": {
-            "path": "overview.md"
+            "path": "README.md"
         },
         "license": {
             "path": "LICENSE.txt"
