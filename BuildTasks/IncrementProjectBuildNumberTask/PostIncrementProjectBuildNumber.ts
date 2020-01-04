@@ -63,15 +63,24 @@ async function run() {
           tl.getVariable("Build.Repository.Uri")
         );
 
+      
+
         const git = simplegit(tl.getVariable("Build.Repository.LocalPath"));
 
         let remote: string;
         if (
-          version_control_provider == "bitbucket" ||
+         
           version_control_provider == "azureRepo"
         ) {
+         
+          //Fix Issue https://developercommunity.visualstudio.com/content/problem/411770/devops-git-url.html
+          repository_url = repository_url.substring(repository_url.indexOf('@')+1);
           remote = `https://x-token-auth:${token}@${repository_url}`;
-        } else if (
+        }else if (  version_control_provider == "bitbucket" )
+        {
+          remote = `https://x-token-auth:${token}@${repository_url}`;
+        } 
+        else if (
           version_control_provider == "github" ||
           version_control_provider == "githubEnterprise"
         ) {

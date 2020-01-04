@@ -88,10 +88,15 @@ async function run() {
     const git = simplegit(local_source_directory);
 
     let remote: string;
-    if (
-      version_control_provider == "bitbucket" ||
-      version_control_provider == "azureRepo"
-    ) {
+
+    if(   version_control_provider == "azureRepo" )
+    {
+      //Fix Issue with azureRepo https://developercommunity.visualstudio.com/content/problem/411770/devops-git-url.html
+      repository_url = repository_url.substring(repository_url.indexOf('@')+1);
+      remote = `https://x-token-auth:${token}@${repository_url}`;
+    }
+    else if (
+      version_control_provider == "bitbucket" ) {
       remote = `https://x-token-auth:${token}@${repository_url}`;
     } else if (
       version_control_provider == "github" ||
