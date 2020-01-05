@@ -172,26 +172,24 @@
             {
                 "displayName": "i18n:OAuth2",
                 "type": "ms.vss-endpoint.endpoint-auth-scheme-oauth2",
-                "headers": [
-                  {
-                    "name": "Authorization",
-                    "value": "Bearer {{{endpoint.AccessToken}}}"
-                  }
-                ],
-                "authorizationUrl": "{{{configuration.Url}}}/services/oauth2/authorize?client_id={{{configuration.ClientId}}}&response_type=token&redirect_uri={{{RedirectUrl}}}",
                 "dataSourceBindings": [
-                  {
-                    "target": "AccessToken",
-                    "dataSourceName": "AccessToken",
-                    "resultTemplate": "{\"AccessToken\" : \"{{{access_token}}}\", \"RefreshToken\" : \"{{{refresh_token}}}\", \"ExpiresIn\" : \"{{{expires_in}}}\", \"TokenType\" : \"{{{token_type}}}\", \"Scope\" : \"{{{scope}}}\", \"Error\" : \"{{{error}}}\", \"ErrorDescription\" : \"{{{error_description}}}\"}"
-                  },
-                  {
-                    "target": "RefreshToken",
-                    "dataSourceName": "RefreshToken",
-                    "resultTemplate": "{\"AccessToken\" : \"{{{access_token}}}\", \"RefreshToken\" : \"{{{refresh_token}}}\", \"ExpiresIn\" : \"{{{expires_in}}}\", \"TokenType\" : \"{{{token_type}}}\", \"Scope\" : \"{{{scope}}}\", \"Error\" : \"{{{error}}}\", \"ErrorDescription\" : \"{{{error_description}}}\"}"
-                  }
-                ]
-              }
+                    {
+                        "target": "AccessToken",
+                        "endpointUrl": "{{{configuration.Url}}}/services/oauth2/token?grant_type=authorization_code&client_id={{{configuration.ClientId}}}&code={{{configuration.AuthorizationCode}}}&client_secret={{{configuration.ClientSecret}}}&redirect_uri={{{RedirectUrl}}}",
+                        "requestVerb": "Post",
+                        "requestContent": "",
+                        "resultSelector": "jsonpath:$",
+                        "resultTemplate": "{\"AccessToken\" : \"{{{access_token}}}\", \"Error\" : \"{{{error}}}\", \"ErrorDescription\" : \"{{{error_description}}}\"}"
+                    }
+                ],
+                "authorizationUrl": "{{{configuration.Url}}}/services/oauth2/authorize?client_id={{{configuration.ClientId}}}&response_type=token&redirect_uri={{{RedirectUrl}}}"
+            },
+            {
+                "displayName": "i18n:JWT",
+                "type": "ms.vss-endpoint.service-endpoint-auth-scheme-JWT",
+                "authorizationUrl": "{{{configuration.Url}}}/services/oauth2/authorize?client_id={{{configuration.ClientId}}}&response_type=token&redirect_uri={{{RedirectUrl}}}",
+            }
+            
         ],
         "helpMarkDown": "<a href=\"https://msdn.microsoft.com/Library/vs/alm/Release/author-release-definition/understanding-tasks#serviceconnections\" target=\"_blank\"><b>Learn More</b></a>"
       }
