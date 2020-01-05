@@ -186,7 +186,7 @@
             },
             {
                 "displayName": "i18n:JWT",
-                "type": "ms.vss-endpoint.service-endpoint-auth-scheme-JWT",
+                "type": "ms.vss-endpoint.endpoint-auth-scheme-JWT",
                 "authorizationUrl": "{{{configuration.Url}}}/services/oauth2/authorize?client_id={{{configuration.ClientId}}}&response_type=token&redirect_uri={{{RedirectUrl}}}"
             }
             
