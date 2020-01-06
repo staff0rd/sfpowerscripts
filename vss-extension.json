@@ -149,49 +149,87 @@
   ],
   "contributions": [
     {
-      "id": "sfpowerscripts-salesforce-auth",
-      "description": "Service Endpoint type for all Salesforce connections",
+      "id": "salesforce-endpoint-type",
+      "description": "Credentials for task invoking Salesforce",
       "type": "ms.vss-endpoint.service-endpoint-type",
       "targets": ["ms.vss-endpoint.endpoint-types"],
       "properties": {
-        "name": "salesforce",
-        "displayName": "Salesforce",
+        "name": "SalesforceServiceEndpoint",
+        "displayName": "Connect to Salesforce",
         "url": {
-          "displayName": "Server Url",
-          "value": "https://login.salesforce.com",
-          "helpText": ""
+          "displayName": "Salesforce Endpoint",
+          "value": "https://login.salesforce.com/"
         },
-        "dataSources": [
-          {
-            "name": "TestConnection",
-            "endpointUrl": "{{{endpoint.url}}}/2.0/repositories?role=member&pagelen=100",
-            "resultSelector": "jsonpath:$.values[*]"
-          }
-        ],
         "authenticationSchemes": [
-            {
-                "displayName": "i18n:OAuth2",
-                "type": "ms.vss-endpoint.endpoint-auth-scheme-oauth2",
-                "dataSourceBindings": [
-                    {
-                        "target": "AccessToken",
-                        "endpointUrl": "{{{configuration.Url}}}/services/oauth2/token?grant_type=authorization_code&client_id={{{configuration.ClientId}}}&code={{{configuration.AuthorizationCode}}}&client_secret={{{configuration.ClientSecret}}}&redirect_uri={{{RedirectUrl}}}",
-                        "requestVerb": "Post",
-                        "requestContent": "",
-                        "resultSelector": "jsonpath:$",
-                        "resultTemplate": "{\"AccessToken\" : \"{{{access_token}}}\", \"Error\" : \"{{{error}}}\", \"ErrorDescription\" : \"{{{error_description}}}\"}"
-                    }
-                ],
-                "authorizationUrl": "{{{configuration.Url}}}/services/oauth2/authorize?client_id={{{configuration.ClientId}}}&response_type=token&redirect_uri={{{RedirectUrl}}}"
-            },
-            {
-                "displayName": "i18n:JWT",
-                "type": "ms.vss-endpoint.endpoint-auth-scheme-JWT",
-                "authorizationUrl": "{{{configuration.Url}}}/services/oauth2/authorize?client_id={{{configuration.ClientId}}}&response_type=token&redirect_uri={{{RedirectUrl}}}"
-            }
-            
-        ],
-        "helpMarkDown": "<a href=\"https://msdn.microsoft.com/Library/vs/alm/Release/author-release-definition/understanding-tasks#serviceconnections\" target=\"_blank\"><b>Learn More</b></a>"
+          {
+            "type": "ms.vss-endpoint.endpoint-auth-scheme-basic",
+            "headers": [
+              {
+                "name": "X-Amz-Date",
+                "value": "{{ #getCurrentUTCDate {} }}"
+              },
+              {
+                "name": "X-Amz-Content-Sha256",
+                "value": "{{ #getHashedPayload {} }}"
+              },
+              {
+                "name": "Authorization",
+                "value": "{{ #getAuthorizationHeader { 'username' : 'endpoint.username', 'password' : 'endpoint.password', 'method' : 'get' } }}"
+              }
+            ],
+            "inputDescriptors": [
+              {
+                "id": "grant_type",
+                "name": "Grant Type",
+                "description": "The type of grant this mode of authentication requires",
+                "inputMode": "textbox",
+                "isConfidential": false,
+                "validation": {
+                  "isRequired": false,
+                  "dataType": "string"
+                },
+                "values": {
+                  "inputId": "grant_typeInput",
+                  "defaultValue": "password",
+                  "isDisabled": true
+                }
+              },
+              {
+                "id": "client_id",
+                "name": "Consumer Key from the connected App Definition",
+                "description": "Consumer Key from the connected App Definition",
+                "inputMode": "passwordbox",
+                "isConfidential": true,
+                "validation": {
+                  "isRequired": true,
+                  "dataType": "string"
+                }
+              },
+              {
+                "id": "password",
+                "name": "Secret access key",
+                "description": "The AWS secret access key for signing programmatic requests",
+                "inputMode": "passwordbox",
+                "isConfidential": true,
+                "validation": {
+                  "isRequired": true,
+                  "dataType": "string"
+                }
+              },
+              {
+                "id": "region",
+                "name": "Region",
+                "description": "The region of the AWS S3 bucket to use for storing the state file.<br><br>Example: us-east-1.<br><br>Note: This region value is used for signing the programmatic requests. In the task, you can use the buckets in this region for storing the state file.",
+                "inputMode": "textbox",
+                "isConfidential": false,
+                "validation": {
+                  "isRequired": true,
+                  "dataType": "string"
+                }
+              }
+            ]
+          }
+        ]
       }
     },
     {
