@@ -158,25 +158,11 @@
         "displayName": "Connect to Salesforce",
         "url": {
           "displayName": "Salesforce Endpoint",
-          "value": "https://login.salesforce.com/"
+          "value": "https://login.salesforce.com/services/oauth2/token"
         },
         "authenticationSchemes": [
           {
             "type": "ms.vss-endpoint.endpoint-auth-scheme-basic",
-            "headers": [
-              {
-                "name": "X-Amz-Date",
-                "value": "{{ #getCurrentUTCDate {} }}"
-              },
-              {
-                "name": "X-Amz-Content-Sha256",
-                "value": "{{ #getHashedPayload {} }}"
-              },
-              {
-                "name": "Authorization",
-                "value": "{{ #getAuthorizationHeader { 'username' : 'endpoint.username', 'password' : 'endpoint.password', 'method' : 'get' } }}"
-              }
-            ],
             "inputDescriptors": [
               {
                 "id": "grant_type",
@@ -198,8 +184,30 @@
                 "id": "client_id",
                 "name": "Consumer Key from the connected App Definition",
                 "description": "Consumer Key from the connected App Definition",
-                "inputMode": "passwordbox",
+                "inputMode": "textbox",
+                "isConfidential": false,
+                "validation": {
+                  "isRequired": true,
+                  "dataType": "string"
+                }
+              },
+              {
+                "id": "client_secret",
+                "name": "Client Secret from the connected App Definition",
+                "description": "Consumer Key from the connected App Definition",
+                "inputMode": "textbox",
                 "isConfidential": true,
+                "validation": {
+                  "isRequired": true,
+                  "dataType": "string"
+                }
+              },
+              {
+                "id": "username",
+                "name": "Username",
+                "description": "Provide the user name of the User",
+                "inputMode": "textbox",
+                "isConfidential": false,
                 "validation": {
                   "isRequired": true,
                   "dataType": "string"
@@ -207,21 +215,10 @@
               },
               {
                 "id": "password",
-                "name": "Secret access key",
-                "description": "The AWS secret access key for signing programmatic requests",
+                "name": "Password",
+                "description": "Provide the passwword along with Security Token for the user",
                 "inputMode": "passwordbox",
                 "isConfidential": true,
-                "validation": {
-                  "isRequired": true,
-                  "dataType": "string"
-                }
-              },
-              {
-                "id": "region",
-                "name": "Region",
-                "description": "The region of the AWS S3 bucket to use for storing the state file.<br><br>Example: us-east-1.<br><br>Note: This region value is used for signing the programmatic requests. In the task, you can use the buckets in this region for storing the state file.",
-                "inputMode": "textbox",
-                "isConfidential": false,
                 "validation": {
                   "isRequired": true,
                   "dataType": "string"
