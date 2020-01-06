@@ -155,53 +155,12 @@
       "targets": ["ms.vss-endpoint.endpoint-types"],
       "properties": {
         "name": "SalesforceServiceEndpoint",
-        "displayName": "Connect to Salesforce",
-        "url": {
-          "displayName": "Salesforce Endpoint",
-          "value": "https://login.salesforce.com/services/oauth2/token"
-        },
+        "displayName": "Salesforce",
         "authenticationSchemes": [
           {
             "type": "ms.vss-endpoint.endpoint-auth-scheme-basic",
             "inputDescriptors": [
-              {
-                "id": "grant_type",
-                "name": "Grant Type",
-                "description": "The type of grant this mode of authentication requires",
-                "inputMode": "textbox",
-                "isConfidential": false,
-                "validation": {
-                  "isRequired": false,
-                  "dataType": "string"
-                },
-                "values": {
-                  "inputId": "grant_typeInput",
-                  "defaultValue": "password",
-                  "isDisabled": true
-                }
-              },
-              {
-                "id": "client_id",
-                "name": "Consumer Key from the connected App Definition",
-                "description": "Consumer Key from the connected App Definition",
-                "inputMode": "textbox",
-                "isConfidential": false,
-                "validation": {
-                  "isRequired": true,
-                  "dataType": "string"
-                }
-              },
-              {
-                "id": "client_secret",
-                "name": "Client Secret from the connected App Definition",
-                "description": "Consumer Key from the connected App Definition",
-                "inputMode": "textbox",
-                "isConfidential": true,
-                "validation": {
-                  "isRequired": true,
-                  "dataType": "string"
-                }
-              },
+
               {
                 "id": "username",
                 "name": "Username",
@@ -216,8 +175,19 @@
               {
                 "id": "password",
                 "name": "Password",
-                "description": "Provide the passwword along with Security Token for the user",
+                "description": "Provide the passwword for the user",
                 "inputMode": "passwordbox",
+                "isConfidential": true,
+                "validation": {
+                  "isRequired": true,
+                  "dataType": "string"
+                }
+              },
+              {
+                "id": "securitytoken",
+                "name": "SecurityToken",
+                "description": "Provide the Security Token for the user",
+                "inputMode": "textbox",
                 "isConfidential": true,
                 "validation": {
                   "isRequired": true,
