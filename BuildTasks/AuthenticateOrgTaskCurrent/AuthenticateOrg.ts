@@ -11,7 +11,6 @@ const nanoid = require('nanoid')
 async function run() {
   try {
     const method: string = tl.getInput("method", true);
-    const username: string = tl.getInput("username", true);
     const isDevHub: boolean = tl.getBoolInput("isdevhub", true);
     const alias: string = tl.getInput("alias", true);
 
@@ -33,7 +32,7 @@ async function run() {
     if (method == "JWT") {
       const jwt_key_file: string = tl.getInput("jwt_key_file", true);
       const clientid: string = tl.getInput("clientid", true);
-
+      const username: string = tl.getInput("username", true);
       const secureFileHelpers: secureFilesCommon.SecureFileHelpers = new secureFilesCommon.SecureFileHelpers();
       const jwt_key_filePath: string = await secureFileHelpers.downloadSecureFile(
         jwt_key_file
@@ -44,12 +43,23 @@ async function run() {
       AppInsights.trackTaskEvent("sfpwowerscript-authenticateorg-task","authUsingJWT");
 
     } else if (method == "Credentials") {
+      const username: string = tl.getInput("username", true);
       const password: string = tl.getInput("password", true);
       const securitytoken: string = tl.getInput("securitytoken", false);
 
       authUsingCreds(isDevHub, alias, username, password, securitytoken);
 
       AppInsights.trackTaskEvent("sfpwowerscript-authenticateorg-task","authUsingCreds");
+    }
+    else if (method == "ServiceConnection")
+    {
+     let connection:string = tl.getInput("salesforce_connection", true);
+     const username: string = tl.getEndpointAuthorizationParameter(connection,"username", true);
+     const password: string = tl.getEndpointAuthorizationParameter(connection,"password", true);
+     const securitytoken: string = tl.getEndpointAuthorizationParameter(connection,"securitytoken", false);
+
+     authUsingCreds(isDevHub, alias, username, password, securitytoken);
+     AppInsights.trackTaskEvent("sfpwowerscript-authenticateorg-task","authUsingConn");
     }
   } catch (err) {
     tl.setResult(tl.TaskResult.Failed, err.message);

@@ -84,19 +84,10 @@
   },
   "files": [
     {
-      "path": "BuildTasks/InstallSFDXCLITask"
-    },
-    {
       "path": "BuildTasks/InstallSFDXCLITaskCurrent"
     },
     {
-      "path": "BuildTasks/AuthenticateOrgTask"
-    },
-    {
       "path": "BuildTasks/AuthenticateOrgTaskCurrent"
-    },
-    {
-      "path": "BuildTasks/ManageScratchOrgTask"
     },
     {
       "path": "BuildTasks/ManageScratchOrgTaskCurrent"
@@ -149,18 +140,37 @@
   ],
   "contributions": [
     {
-      "id": "salesforce-endpoint-type",
-      "description": "Credentials for task invoking Salesforce",
+      "id": "sfpowerscripts-salesforce-connection",
+      "description": "Credentials for task invoking Salesforce using SFPowerscripts",
       "type": "ms.vss-endpoint.service-endpoint-type",
       "targets": ["ms.vss-endpoint.endpoint-types"],
       "properties": {
         "name": "SalesforceServiceEndpoint",
         "displayName": "Salesforce",
+         "url": {
+          "displayName": "Endpoint",
+          "value": "https://login.salesforce.com/services/oauth2/token",
+          "required": true,
+          "isVisible": "true",
+          "helpText": "Url of your Salesforce Authentication Endpoint",
+          "dependsOn": {
+            "input": "environment",
+            "map": [
+                {
+                    "key": "Sandbox",
+                    "value": "https://test.salesforce.com/services/oauth2/token"
+                },
+                {
+                    "key": "Production/DevHub",
+                    "value": "https://login.salesforce.com/services/oauth2/token"
+                }
+            ]
+         }
+        },
         "authenticationSchemes": [
           {
             "type": "ms.vss-endpoint.endpoint-auth-scheme-basic",
             "inputDescriptors": [
-
               {
                 "id": "username",
                 "name": "Username",
@@ -200,14 +210,6 @@
       }
     },
     {
-      "id": "sfpwowerkit-installsfdx-task",
-      "type": "ms.vss-distributed-task.task",
-      "targets": ["ms.vss-distributed-task.tasks"],
-      "properties": {
-        "name": "BuildTasks/InstallSFDXCLITask"
-      }
-    },
-    {
       "id": "sfpwowerscript-installsfdx-task",
       "type": "ms.vss-distributed-task.task",
       "targets": ["ms.vss-distributed-task.tasks"],
@@ -216,27 +218,11 @@
       }
     },
     {
-      "id": "sfpower-authenticateorg",
-      "type": "ms.vss-distributed-task.task",
-      "targets": ["ms.vss-distributed-task.tasks"],
-      "properties": {
-        "name": "BuildTasks/AuthenticateOrgTask"
-      }
-    },
-    {
       "id": "sfpwowerscript-authenticateorg-task",
       "type": "ms.vss-distributed-task.task",
       "targets": ["ms.vss-distributed-task.tasks"],
       "properties": {
         "name": "BuildTasks/AuthenticateOrgTaskCurrent"
-      }
-    },
-    {
-      "id": "sfpower-managescratchorg",
-      "type": "ms.vss-distributed-task.task",
-      "targets": ["ms.vss-distributed-task.tasks"],
-      "properties": {
-        "name": "BuildTasks/ManageScratchOrgTask"
       }
     },
     {
