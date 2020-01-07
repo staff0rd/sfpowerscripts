@@ -147,7 +147,7 @@
       "properties": {
         "name": "sfpowerscriptsSalesforce",
         "displayName": "Salesforce",
-         "url": {
+        "url": {
           "displayName": "Endpoint",
           "value": "https://login.salesforce.com/services/oauth2/token",
           "required": true,
@@ -156,16 +156,16 @@
           "dependsOn": {
             "input": "environment",
             "map": [
-                {
-                    "key": "Sandbox",
-                    "value": "https://test.salesforce.com/services/oauth2/token"
-                },
-                {
-                    "key": "Production",
-                    "value": "https://login.salesforce.com/services/oauth2/token"
-                }
+              {
+                "key": "Sandbox",
+                "value": "https://test.salesforce.com/services/oauth2/token"
+              },
+              {
+                "key": "Production",
+                "value": "https://login.salesforce.com/services/oauth2/token"
+              }
             ]
-         }
+          }
         },
         "authenticationSchemes": [
           {
@@ -206,30 +206,30 @@
               },
               {
                 "id": "environment",
-                "name": "i18n:Environment",
+                "name": "Environment",
                 "description": "Environment Type",
                 "inputMode": "combo",
                 "isConfidential": false,
                 "validation": {
-                    "isRequired": false,
-                    "dataType": "string",
-                    "maxLength": 300
+                  "isRequired": true,
+                  "dataType": "string",
+                  "maxLength": 300
                 },
                 "values": {
-                    "inputId": "environmentValues",
-                    "defaultValue": "AzureCloud",
-                    "possibleValues": [
-                        {
-                            "value": "Production",
-                            "displayValue": "Production/DevHub"
-                        },
-                        {
-                            "value": "Sandbox",
-                            "displayValue": "Sandbox"
-                        }
-                    ]
+                  "inputId": "environmentValues",
+                  "defaultValue": "AzureCloud",
+                  "possibleValues": [
+                    {
+                      "value": "Production",
+                      "displayValue": "Production/DevHub"
+                    },
+                    {
+                      "value": "Sandbox",
+                      "displayValue": "Sandbox"
+                    }
+                  ]
                 }
-            }
+              }
             ]
           }
         ]
