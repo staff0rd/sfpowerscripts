@@ -55,7 +55,6 @@ target.copy = function() {
   console.log("build: copying resources");
   [
     "README.md",
-    "overview.md",
     "LICENSE.txt",
     "tslint.json",
     "vss-extension.json"
