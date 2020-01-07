@@ -52,7 +52,7 @@
       "defaultValue": "",
       "required": true,
       "helpMarkDown": "Authentication username which is authorized to use the connected app or username for the org if using credential method",
-      "visibleRule": "method = Credentials | method = JWT"
+      "visibleRule": "method = Credentials || method = JWT"
     },
     {
       "name": "password",
