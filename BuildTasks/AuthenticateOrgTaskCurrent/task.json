@@ -7,7 +7,7 @@
   "category": "Utility",
   "author": "azlam.abdulsalam",
   "version": {
-    "Major": 7,
+    "Major": 6,
     "Minor": 0,
     "Patch": 0
   },
@@ -86,7 +86,8 @@
       "label": "Authenticate this org as a DevHub",
       "defaultValue": false,
       "required": true,
-      "helpMarkDown": "Enable this option if a devhub is to be authenticated"
+      "helpMarkDown": "Enable this option if a devhub is to be authenticated",
+      "visibleRule": "method = Credentials || method = JWT"
     },
     {
       "name": "clientid",

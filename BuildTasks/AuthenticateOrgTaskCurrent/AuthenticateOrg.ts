@@ -57,7 +57,8 @@ async function run() {
      const username: string = tl.getEndpointAuthorizationParameter(connection,"username", true);
      const password: string = tl.getEndpointAuthorizationParameter(connection,"password", true);
      const securitytoken: string = tl.getEndpointAuthorizationParameter(connection,"securitytoken", false);
-
+     const isDevHub: boolean = tl.getEndpointAuthorizationParameter(connection,"environment", false)=='Production'?true:false;
+    
      authUsingCreds(isDevHub, alias, username, password, securitytoken);
      AppInsights.trackTaskEvent("sfpwowerscript-authenticateorg-task","authUsingConn");
     }
