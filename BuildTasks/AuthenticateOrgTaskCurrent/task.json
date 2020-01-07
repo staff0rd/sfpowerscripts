@@ -7,7 +7,7 @@
   "category": "Utility",
   "author": "azlam.abdulsalam",
   "version": {
-    "Major": 6,
+    "Major": 7,
     "Minor": 0,
     "Patch": 0
   },
@@ -29,7 +29,7 @@
     },
     {
       "name": "salesforce_connection",
-      "type": "connectedService:sfpowerscripts-salesforce-connection:basic",
+      "type": "connectedService:sfpowerscriptsSalesforce:UsernamePassword",
       "label": "Salesforce Connection",
       "defaultValue": "",
       "required": false,

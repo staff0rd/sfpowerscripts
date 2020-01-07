@@ -145,7 +145,7 @@
       "type": "ms.vss-endpoint.service-endpoint-type",
       "targets": ["ms.vss-endpoint.endpoint-types"],
       "properties": {
-        "name": "SalesforceServiceEndpoint",
+        "name": "sfpowerscriptsSalesforce",
         "displayName": "Salesforce",
          "url": {
           "displayName": "Endpoint",
@@ -161,7 +161,7 @@
                     "value": "https://test.salesforce.com/services/oauth2/token"
                 },
                 {
-                    "key": "Production/DevHub",
+                    "key": "Production",
                     "value": "https://login.salesforce.com/services/oauth2/token"
                 }
             ]
@@ -203,7 +203,33 @@
                   "isRequired": true,
                   "dataType": "string"
                 }
-              }
+              },
+              {
+                "id": "environment",
+                "name": "i18n:Environment",
+                "description": "Environment Type",
+                "inputMode": "combo",
+                "isConfidential": false,
+                "validation": {
+                    "isRequired": false,
+                    "dataType": "string",
+                    "maxLength": 300
+                },
+                "values": {
+                    "inputId": "environmentValues",
+                    "defaultValue": "AzureCloud",
+                    "possibleValues": [
+                        {
+                            "value": "Production",
+                            "displayValue": "Production/DevHub"
+                        },
+                        {
+                            "value": "Sandbox",
+                            "displayValue": "Sandbox"
+                        }
+                    ]
+                }
+            }
             ]
           }
         ]
