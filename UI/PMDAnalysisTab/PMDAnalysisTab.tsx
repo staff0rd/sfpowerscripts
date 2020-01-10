@@ -134,7 +134,7 @@ class PMDAnalysisTab extends React.Component<{}, IBuildInfoTabState> {
     });
 
     for (let i = 0; i < this.state.details.length; i++) {
-      if (this.state.details[i].priority <= 3) {
+      if (this.state.details[i].priority <= 2) {
         let asyncRow = new ObservableValue<CodeAnalyisDetail | undefined>(
           undefined
         );
