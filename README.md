@@ -6,6 +6,10 @@ Please note this extension only works with the newer source format based reposit
 
 The changelog is available at [https://sfpowerscripts.com/changelog/](https://sfpowerscripts.com/changelog/)
 
+## Build Result Enhancements
+
+- PMD Apex Analysis Tab 
+
 ## Common/Utility Tasks
 
 - Install SFDX CLI along with SFPowerkit Plugin
