@@ -23,6 +23,8 @@ var tl = require("azure-pipelines-task-lib/task");
 
 // global paths
 var sourcePath = path.join(__dirname, "BuildTasks");
+var assetPath =  path.join(__dirname,"static");
+var widgetsPath = path.join(__dirname,"Widgets");
 var binariesPath = path.join(__dirname, "build");
 var packagesPath = path.join(__dirname, "dist");
 
@@ -41,9 +43,13 @@ target.copy = function() {
 
   //copy directory
   var taskOutputPath = path.join(binariesPath, "BuildTasks");
-
+  var assetOutputPath = path.join(binariesPath,"static");
+  
   console.log("copy: copy task");
   copyRecursiveSync(sourcePath, taskOutputPath);
+  
+  console.log("copy: copy assets");
+  copyRecursiveSync(assetPath, assetOutputPath);
 
   // rimraf.sync(taskOutputPath + "/**/**/*.ts");
 
@@ -197,6 +203,7 @@ updateExtensionManifest = function(dir, options, isOriginalFile) {
     manifest.id = "sfpowerscripts" + "-" + "review";
     manifest.name = "sfpowerscripts" + " (" + "review" + ")";
     manifest.public = false;
+    manifest.baseUri= "https://localhost:3000/build/";
   } else {
     manifest.id = "sfpowerscripts";
     manifest.name = "sfpowerscripts";
@@ -233,25 +240,6 @@ updateTaskManifest = function(dir, options, isOriginalFile) {
   });
 };
 
-function installTasks(dir) {
-  echo("Installing task dependencies...");
-
-  var tasksPath = path.join(dir, "task");
-  var tasks = fs.readdirSync(tasksPath);
-  console.log(tasks.length + " tasks found.");
-  tasks.forEach(function(task) {
-    console.log("Processing task " + task);
-    process.chdir(path.join(tasksPath, task));
-
-    console.log("Installing npm dependencies for task...");
-    if (exec("npm install --only=prod").code != 0) {
-      console.log("npm install for task " + task + " failed");
-      exit(1);
-    }
-  });
-
-  process.chdir(dir);
-}
 
 copyRecursiveSync = function(src, dest) {
   var exists = fs.existsSync(src);

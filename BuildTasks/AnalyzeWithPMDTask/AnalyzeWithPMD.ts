@@ -19,24 +19,24 @@ async function run() {
     const directory: string = tl.getInput("directory", false);
     const ruleset: string = tl.getInput("ruleset", false);
 
-    AppInsights.setupAppInsights(tl.getBoolInput("isTelemetryEnabled",true));
-
+    AppInsights.setupAppInsights(tl.getBoolInput("isTelemetryEnabled", true));
 
     let rulesetpath: string;
     if (ruleset == "Custom" && isNullOrUndefined(rulesetpath)) {
       rulesetpath = tl.getInput("rulesetpath", false);
-      AppInsights.trackTaskEvent("sfpwowerscripts-analyzewithpmd-task","custom_ruleset");       
-
+      AppInsights.trackTaskEvent(
+        "sfpwowerscripts-analyzewithpmd-task",
+        "custom_ruleset"
+      );
     }
 
     const format: string = tl.getInput("format", false);
     const outputPath: string = tl.getInput("outputPath", false);
     const version: string = tl.getInput("version", false);
 
-    const isToBreakBuild = tl.getBoolInput("isToBreakBuild",false);
+    const isToBreakBuild = tl.getBoolInput("isToBreakBuild", false);
 
-
-    let result: [number, number,number];
+    let result: [number, number, number];
 
     let pmdImpl: AnalyzeWithPMDImpl = new AnalyzeWithPMDImpl(
       project_directory,
@@ -49,9 +49,13 @@ async function run() {
     let command = await pmdImpl.buildExecCommand();
     await pmdImpl.exec(command);
 
-    let artifactFilePath = path.join(os.homedir(), "sfpowerkit","pmd",`pmd-bin-${version}`, "sf-pmd-output.xml");
-
-    
+    let artifactFilePath = path.join(
+      os.homedir(),
+      "sfpowerkit",
+      "pmd",
+      `pmd-bin-${version}`,
+      "sf-pmd-output.xml"
+    );
 
     tl.debug(`Artifact File Path : ${artifactFilePath}`);
 
@@ -83,21 +87,34 @@ async function run() {
         artifactFilePath
       );
 
+      //add attachement
+      tl.command(
+        "task.addattachment",
+        {
+          type: `pmd_analysis_results`,
+          name: `sfpowerscripts_pmd_analysis_results`
+        },
+        artifactFilePath
+      );
 
-      if(isToBreakBuild && result[2]>0)
-        tl.setResult(tl.TaskResult.Failed,`Build Failed due to ${result[2]} critical defects found`);
+      if (isToBreakBuild && result[2] > 0)
+        tl.setResult(
+          tl.TaskResult.Failed,
+          `Build Failed due to ${result[2]} critical defects found`
+        );
 
       AppInsights.trackTask("sfpwowerscripts-analyzewithpmd-task");
-      AppInsights.trackTaskEvent("sfpwowerscripts-analyzewithpmd-task","artifact_uploaded");       
-
-       
+      AppInsights.trackTaskEvent(
+        "sfpwowerscripts-analyzewithpmd-task",
+        "artifact_uploaded"
+      );
     }
   } catch (err) {
     tl.setResult(tl.TaskResult.Failed, err.message);
   }
 }
 
-function parseXmlReport(xmlReport: string): [number, number,number] {
+function parseXmlReport(xmlReport: string): [number, number, number] {
   let fileCount = 0;
   let violationCount = 0;
   let criticaldefects = 0;
@@ -122,26 +139,25 @@ function parseXmlReport(xmlReport: string): [number, number,number] {
       }
     });
 
-   data.pmd.file[0].violation.forEach(element => {
-      if(element["$"]["priority"]==5)
-       {
-         criticaldefects++;
-       }
-   });
+    for (let i = 0; i < data.pmd.file.length; i++) {
+      data.pmd.file[i].violation.forEach(element => {
+        if (element["$"]["priority"] == 1) {
+          criticaldefects++;
+        }
+      });
+    }
 
 
   });
 
-  
-
-  return [violationCount, fileCount,criticaldefects];
+  return [violationCount, fileCount, criticaldefects];
 }
 
 // For a given code analysis tool, create a one-line summary from multiple AnalysisResult objects.
-function createSummaryLine(analysisreport: [number, number,number]): string {
+function createSummaryLine(analysisreport: [number, number, number]): string {
   let violationCount: number = analysisreport[0];
   let affectedFileCount: number = analysisreport[1];
-  let criticaldefects:number = analysisreport[2];
+  let criticaldefects: number = analysisreport[2];
   let toolName = "PMD";
 
   if (violationCount > 1) {
@@ -160,7 +176,7 @@ function createSummaryLine(analysisreport: [number, number,number]): string {
   }
   if (violationCount === 0) {
     // Looks like: 'PMD found no violations.'
-    return `${toolName} found no violations.`
+    return `${toolName} found no violations.`;
   }
 
   // There should be no valid code reason to reach this point - '1 violation in 4 files' is not expected
