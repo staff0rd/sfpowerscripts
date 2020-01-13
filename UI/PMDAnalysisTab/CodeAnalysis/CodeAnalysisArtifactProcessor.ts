@@ -50,8 +50,14 @@ export default class CodeAnalysisArtifactProcessor {
 
       for (let i = 0; i < data.pmd.file.length; i++) {
         data.pmd.file[i].violation.forEach(element => {
-          let detail: CodeAnalyisDetail = {
-            filename: data.pmd.file[i]["$"]["name"],
+
+          //Crappy stuff.. need better logic here.. strip of path's
+          let fileName:string = data.pmd.file[i]["$"]["name"].substring(data.pmd.file[i]["$"]["name"].indexOf(`/home/vsts/work/1/s`)+19);
+          if(fileName.includes('d:\\a\\1\\s`'))
+          fileName =  fileName.substring(data.pmd.file[i]["$"]["name"].indexOf(`d:\\a\\1\\s`)+8);
+
+          let detail: CodeAnalyisDetail = { 
+           filename: fileName,
             beginLine: element["$"]["beginline"],
             priority: element["$"]["priority"],
             problem: element["_"]

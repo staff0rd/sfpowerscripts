@@ -149,7 +149,7 @@ class PMDAnalysisTab extends React.Component<{}, IBuildInfoTabState> {
       <div className="container">
         <div className="flex-row">
           <MetricsComponent
-            title={"Validation Count"}
+            title={"Total Issues"}
             value={this.state.violationCount}
           />
           <MetricsComponent
@@ -157,7 +157,7 @@ class PMDAnalysisTab extends React.Component<{}, IBuildInfoTabState> {
             value={this.state.criticaldefects}
           />
           <MetricsComponent
-            title={"Affected FileCount"}
+            title={"Affected"}
             value={this.state.affectedFileCount}
           />
         </div>
