@@ -14,13 +14,14 @@ async function run() {
     const cli_version: string = tl.getInput("sfdx_cli_version", false);
     const sfpowerkit_version: string = tl.getInput("sfpowerkit_version", false);
     const sfdx_plugins:string = tl.getInput("plugins",false);
+    const salesforce_api_version:string = tl.getInput("salesforce_api_version",false);
     
     let plugins:string[]=[];
     let sfdx_homedirectory;
     let whitelistpath="";
    
 
-
+ 
     if(!isNullOrUndefined(sfdx_plugins))
     plugins=sfdx_plugins.split(',');
 
@@ -54,6 +55,10 @@ async function run() {
     
    
     console.log("SFDX CLI Installed");
+
+
+   
+
     tl.debug(`HomeDirectory: ${sfdx_homedirectory}`);
     tl.debug(`WhiteListPath: ${whitelistpath}`);
 
@@ -73,6 +78,20 @@ async function run() {
         `sfdx plugins:install ${element}`, { encoding: "utf8" }
       );
       console.log(output);
+
+
+      console.log("Setting API Version if any..")
+      if(!isNullOrUndefined(salesforce_api_version))
+      {
+        
+       let output = child_process.execSync(
+         `sfdx force:config:set apiVersion=${salesforce_api_version}`, { encoding: "utf8" }
+       );
+       console.log(output);
+  
+       console.log("API Version set succesfully");
+      }
+  
 
     });
    
