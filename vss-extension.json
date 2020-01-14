@@ -3,7 +3,7 @@
     "id": "sfpowerscripts-dev",
     "publisher": "AzlamSalam",
     "name": "sfpowerscripts (dev)",
-    "version": "7.0.4",
+    "version": "8.0.6",
     "description": "Azure Pipelines tasks for working with Salesforce",
     "tags": [
         "Extension",
@@ -40,13 +40,17 @@
             "id": "Microsoft.VisualStudio.Services.Cloud"
         }
     ],
-    "scopes": [],
+    "scopes": [
+        "vso.build_execute",
+        "vso.release_manage",
+        "vso.serviceendpoint_manage"
+    ],
     "categories": [
         "Azure Pipelines"
     ],
     "content": {
         "details": {
-            "path": "overview.md"
+            "path": "README.md"
         },
         "license": {
             "path": "LICENSE.txt"
@@ -86,19 +90,10 @@
     },
     "files": [
         {
-            "path": "BuildTasks/InstallSFDXCLITask"
-        },
-        {
             "path": "BuildTasks/InstallSFDXCLITaskCurrent"
         },
         {
-            "path": "BuildTasks/AuthenticateOrgTask"
-        },
-        {
             "path": "BuildTasks/AuthenticateOrgTaskCurrent"
-        },
-        {
-            "path": "BuildTasks/ManageScratchOrgTask"
         },
         {
             "path": "BuildTasks/ManageScratchOrgTaskCurrent"
@@ -147,17 +142,128 @@
         },
         {
             "path": "BuildTasks/ExportSourceFromAnOrgTask"
+        },
+        {
+            "path": "static",
+            "addressable": true
+        },
+        {
+            "path": "UI",
+            "addressable": true
         }
     ],
     "contributions": [
         {
-            "id": "sfpwowerkit-installsfdx-task",
-            "type": "ms.vss-distributed-task.task",
+            "id": "sfpowerscripts-pmdanalysis-tab",
+            "type": "ms.vss-build-web.build-results-tab",
+            "description": "A tab contributing to build results view",
             "targets": [
-                "ms.vss-distributed-task.tasks"
+                "ms.vss-build-web.build-results-view"
             ],
             "properties": {
-                "name": "BuildTasks/InstallSFDXCLITask"
+                "name": "PMD Apex Analysis",
+                "uri": "UI/PMDAnalysisTab/PMDAnalysisTab.html",
+                "supportsTasks": [
+                    "2d221ae3-0f82-4cac-a269-ffcd98a72d96"
+                ]
+            }
+        },
+        {
+            "id": "sfpowerscripts-salesforce-connection",
+            "description": "Credentials for task invoking Salesforce using SFPowerscripts",
+            "type": "ms.vss-endpoint.service-endpoint-type",
+            "targets": [
+                "ms.vss-endpoint.endpoint-types"
+            ],
+            "properties": {
+                "name": "sfpowerscriptsSalesforce",
+                "displayName": "Salesforce",
+                "url": {
+                    "displayName": "Endpoint",
+                    "value": "https://login.salesforce.com/services/oauth2/token",
+                    "required": true,
+                    "isVisible": "true",
+                    "helpText": "Url of your Salesforce Authentication Endpoint",
+                    "dependsOn": {
+                        "input": "environment",
+                        "map": [
+                            {
+                                "key": "Sandbox",
+                                "value": "https://test.salesforce.com/services/oauth2/token"
+                            },
+                            {
+                                "key": "Production",
+                                "value": "https://login.salesforce.com/services/oauth2/token"
+                            }
+                        ]
+                    }
+                },
+                "authenticationSchemes": [
+                    {
+                        "type": "ms.vss-endpoint.endpoint-auth-scheme-basic",
+                        "inputDescriptors": [
+                            {
+                                "id": "username",
+                                "name": "Username",
+                                "description": "Provide the user name of the User",
+                                "inputMode": "textbox",
+                                "isConfidential": false,
+                                "validation": {
+                                    "isRequired": true,
+                                    "dataType": "string"
+                                }
+                            },
+                            {
+                                "id": "password",
+                                "name": "Password",
+                                "description": "Provide the passwword for the user",
+                                "inputMode": "passwordbox",
+                                "isConfidential": true,
+                                "validation": {
+                                    "isRequired": true,
+                                    "dataType": "string"
+                                }
+                            },
+                            {
+                                "id": "securitytoken",
+                                "name": "SecurityToken",
+                                "description": "Provide the Security Token for the user",
+                                "inputMode": "textbox",
+                                "isConfidential": true,
+                                "validation": {
+                                    "isRequired": true,
+                                    "dataType": "string"
+                                }
+                            },
+                            {
+                                "id": "environment",
+                                "name": "Environment",
+                                "description": "Environment Type",
+                                "inputMode": "combo",
+                                "isConfidential": false,
+                                "validation": {
+                                    "isRequired": true,
+                                    "dataType": "string",
+                                    "maxLength": 300
+                                },
+                                "values": {
+                                    "inputId": "environmentValues",
+                                    "defaultValue": "AzureCloud",
+                                    "possibleValues": [
+                                        {
+                                            "value": "Production",
+                                            "displayValue": "Production/DevHub"
+                                        },
+                                        {
+                                            "value": "Sandbox",
+                                            "displayValue": "Sandbox"
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                ]
             }
         },
         {
@@ -171,16 +277,6 @@
             }
         },
         {
-            "id": "sfpower-authenticateorg",
-            "type": "ms.vss-distributed-task.task",
-            "targets": [
-                "ms.vss-distributed-task.tasks"
-            ],
-            "properties": {
-                "name": "BuildTasks/AuthenticateOrgTask"
-            }
-        },
-        {
             "id": "sfpwowerscript-authenticateorg-task",
             "type": "ms.vss-distributed-task.task",
             "targets": [
@@ -188,16 +284,6 @@
             ],
             "properties": {
                 "name": "BuildTasks/AuthenticateOrgTaskCurrent"
-            }
-        },
-        {
-            "id": "sfpower-managescratchorg",
-            "type": "ms.vss-distributed-task.task",
-            "targets": [
-                "ms.vss-distributed-task.tasks"
-            ],
-            "properties": {
-                "name": "BuildTasks/ManageScratchOrgTask"
             }
         },
         {

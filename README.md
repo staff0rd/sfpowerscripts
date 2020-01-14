@@ -6,6 +6,10 @@ Please note this extension only works with the newer source format based reposit
 
 The changelog is available at [https://sfpowerscripts.com/changelog/](https://sfpowerscripts.com/changelog/)
 
+## Build Result Enhancements
+
+- PMD Apex Analysis Tab 
+
 ## Common/Utility Tasks
 
 - Install SFDX CLI along with SFPowerkit Plugin
@@ -13,6 +17,7 @@ The changelog is available at [https://sfpowerscripts.com/changelog/](https://sf
 - Validate a Unlocked package for metadata coverage
 - Install all package dependencies of an unlocked package
 - Run apex code analysis using PMD
+- Export the full metadata in an org for backup
 
 ## Deployment Related Tasks
 
