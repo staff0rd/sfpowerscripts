@@ -39,10 +39,18 @@ async function run() {
     tl.debug(`Command Generated ${command}`);
     await createDeltaPackageImp.exec(command);
 
+
     let artifactFilePath = path.join(
-     __dirname,
+      tl.getVariable("build.repository.localpath"),
       "src_delta"
     );
+
+
+    tl.setVariable("sfpowerscripts_delta_package_path", artifactFilePath);
+
+    
+    if (build_artifact_enabled) {
+  
 
     tl.command(
       "artifact.upload",
@@ -50,7 +58,7 @@ async function run() {
       artifactFilePath
     );
 
-    if (build_artifact_enabled) {
+ 
       let repository_url = tl.getVariable("build.repository.uri");
       let commit_id = tl.getVariable("build.sourceVersion");
 
