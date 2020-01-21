@@ -40,7 +40,7 @@ async function run() {
     await createDeltaPackageImp.exec(command);
 
     let artifactFilePath = path.join(
-      tl.getVariable("build.repository.localpath"),
+     __dirname,
       "src_delta"
     );
 
