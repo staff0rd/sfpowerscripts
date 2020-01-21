@@ -81,3 +81,5 @@ async function run() {
     tl.setResult(tl.TaskResult.Failed, err.message);
   }
 }
+
+run();
