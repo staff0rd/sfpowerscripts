@@ -456,7 +456,7 @@
                 "ms.vss-distributed-task.tasks"
             ],
             "properties": {
-                "name": "BuildTasks/ExportSourceFromAnOrgTask"
+                "name": "BuildTasks/CreateDeltaPackageTask"
             }
         }
     ]
