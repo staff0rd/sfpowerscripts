@@ -71,7 +71,8 @@ async function run() {
       let metadata = {
         sourceVersion: commit_id,
         repository_url: repository_url,
-        package_type: "delta"
+        package_type: "delta",
+        version_name: version_name
       };
 
       fs.writeFileSync(
