@@ -60,7 +60,7 @@ async function run() {
 
     tl.command(
       "artifact.upload",
-      { artifactname: `Package` },
+      { artifactname: `sfpowerscripts_delta_package` },
       artifactFilePath
     );
 

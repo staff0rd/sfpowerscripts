@@ -7,8 +7,8 @@
   "category": "Build",
   "author": "azlam.abdulsalam",
   "version": {
-    "Major": 4,
-    "Minor": 1,
+    "Major": 1,
+    "Minor": 0,
     "Patch": 0
   },
   "instanceNameFormat": "Create Delta Package based on two commits",
@@ -72,10 +72,10 @@
     {
       "name": "set_build_number",
       "type": "boolean",
-      "label": "Set the pipeline's build number to the the project's incremented version number",
+      "label": "Set the pipeline's build number to the the version name mentioned in the task",
       "defaultValue": true,
       "required": true,
-      "helpMarkDown": "Set the pipeline's build number to the the project's incremented version number"
+      "helpMarkDown": "Set the pipeline's build number to the the version name mentioned in the task"
     },
     {
       "name": "build_artifact_enabled",

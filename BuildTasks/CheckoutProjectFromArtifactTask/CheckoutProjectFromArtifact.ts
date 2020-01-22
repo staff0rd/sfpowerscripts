@@ -80,6 +80,9 @@ async function run() {
 
     console.log(`Source Directory created at ${local_source_directory}`);
 
+    if(package_metadata_json['package_type']=='source' || package_metadata_json['package_type']=='unlocked')
+    {
+
     //Strinp https
     const removeHttps = input => input.replace(/^https?:\/\//, "");
 
@@ -106,10 +109,30 @@ async function run() {
     await git.checkout(package_metadata.sourceVersion);
 
     console.log(`Checked Out ${package_metadata.sourceVersion} sucessfully`);
+    }
+    else if (package_metadata_json['package_type']=='delta')
+    {
+
+      let delta_artifact_location = path.join(
+        artifact_directory,
+        artifact,
+       "sfpowerscripts_delta_package"
+      );
+     
+      fs.copySync(
+        this.local_source_directory,
+        this.delta_artifact_location,
+        { overwrite: true }
+      );
+
+
+
+    }
 
     fs.readdirSync(local_source_directory).forEach(file => {
       console.log(file);
     });
+    
 
     tl.setVariable("sfpowerscripts_checked_out_path", local_source_directory);
 
