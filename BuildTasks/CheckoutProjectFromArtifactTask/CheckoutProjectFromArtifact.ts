@@ -12,13 +12,10 @@ async function run() {
 
     const artifact = tl.getInput("artifact", true);
     const artifact_type = tl.getInput("typeOfArtifact", true);
-    let version_control_provider:string;
+    let version_control_provider: string;
 
     if (artifact_type != "delta") {
-      version_control_provider = tl.getInput(
-        "versionControlProvider",
-        true
-      );
+      version_control_provider = tl.getInput("versionControlProvider", true);
 
       let connection: string;
       switch (version_control_provider) {
