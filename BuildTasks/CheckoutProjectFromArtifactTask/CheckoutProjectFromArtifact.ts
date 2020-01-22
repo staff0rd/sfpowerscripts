@@ -13,6 +13,8 @@ async function run() {
     const artifact = tl.getInput("artifact", true);
     const artifact_type = tl.getInput("typeOfArtifact", true);
     let version_control_provider: string;
+    let token;
+    let username: string;
 
     if (artifact_type != "delta") {
       version_control_provider = tl.getInput("versionControlProvider", true);
@@ -30,8 +32,7 @@ async function run() {
           break;
       }
 
-      let token;
-      let username: string;
+    
       if (version_control_provider == "azureRepo") {
         token = tl.getVariable("system.accessToken");
       } else if (
