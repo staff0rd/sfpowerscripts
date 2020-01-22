@@ -9,8 +9,9 @@ async function run() {
   try {
     const project = tl.getInput("package", false);
     const project_directory = tl.getInput("project_directory", false);
-    const version_number: string = tl.getInput("version_number", false);
+    const version_name: string = tl.getInput("version_name", false);
     let revision_from: string = tl.getInput("revision_from", true);
+    const set_build_number: boolean = tl.getBoolInput("set_build_number",true);
 
     let revision_to: string = tl.getInput("revision_to", false);
     if (isNullOrUndefined(revision_to)) {
@@ -24,6 +25,11 @@ async function run() {
       "build_artifact_enabled",
       true
     );
+
+    if (set_build_number) {
+      console.log(`Updating build number to ${version_name}`);
+      tl.updateBuildNumber(version_name);
+    }
 
     AppInsights.setupAppInsights(tl.getBoolInput("isTelemetryEnabled", true));
 
