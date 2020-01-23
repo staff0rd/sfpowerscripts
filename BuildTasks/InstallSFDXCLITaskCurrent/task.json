@@ -7,15 +7,24 @@
     "category": "Utility",
     "author": "azlam.abdulsalam",
     "version": {
-        "Major": 4,
+        "Major": 5,
         "Minor": 0,
-        "Patch": 5
+        "Patch": 0
     },
     "runsOn": [
         "Agent"
     ],
     "instanceNameFormat": "Install SFDX",
     "inputs": [
+        {
+            "name": "salesforce_api_version",
+            "type": "string",
+            "label": "Override Default Salesforce API Version used by the CLI and Plugins",
+            "defaultValue": "",
+            "required": false,
+            "helpMarkDown": "Provide an API version which the CLI commands should utilize, if not provided, the latest GA version used by the sfdx cli is used"
+
+        },
         {
             "name": "sfdx_cli_version",
             "type": "string",

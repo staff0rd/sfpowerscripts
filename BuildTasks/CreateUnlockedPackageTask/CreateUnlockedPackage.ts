@@ -67,7 +67,8 @@ async function run() {
       let metadata = {
         package_version_id: package_version_id,
         sourceVersion: commit_id,
-        repository_url:repository_url
+        repository_url:repository_url,
+        package_type:"unlocked"
      };
 
       fs.writeFileSync(__dirname + "/artifact_metadata", JSON.stringify(metadata));
