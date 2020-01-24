@@ -179,7 +179,7 @@ class PMDAnalysisTab extends React.Component<{}, IBuildInfoTabState> {
       promiseResolver();
     }, 1000 + Math.round(Math.random() * 2000));
 
-    this._timeoutIdMap[timeoutId] = true;
+    // this._timeoutIdMap[timeoutId] = true;
 
     let promiseResolver;
 
