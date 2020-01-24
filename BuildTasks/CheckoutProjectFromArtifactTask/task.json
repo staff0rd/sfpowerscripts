@@ -1,19 +1,32 @@
 {
   "id": "7915fcdb-f02a-43ae-92bd-494993a31e5d",
   "name": "sfpwowerscript-checkoutprojectfromartifact-task",
-  "friendlyName": "Checkout the project from Git mentioned in the artifact",
+  "friendlyName": "Checkout the package from the associated artifact",
   "description": "Use this utility task to checkout the mentioned commit from a sfpowerscripts build artifact for checking out associated code in Release Pipelines, This task is part of SFPowerscripts. Read more at https://bit.ly/2LuJjLJ",
   "helpMarkDown": "",
   "category": "Utility",
   "author": "azlam.abdulsalam",
   "version": {
-    "Major": 6,
+    "Major": 8,
     "Minor": 0,
     "Patch": 0
   },
   "runsOn": ["Agent"],
-  "instanceNameFormat": "Checkout $(artifactname) from Git",
+  "instanceNameFormat": "Checkout $(artifact) from associated build pipeline",
   "inputs": [
+    {
+      "name": "typeOfArtifact",
+      "type": "pickList",
+      "label": "Select the packaging type of the associated artifact",
+      "defaultValue": "source",
+      "options": {
+        "source": "Source Deployment",
+        "delta": "Delta Deployment",
+        "unlocked": "Unlocked Package"
+      },
+      "required": false,
+      "helpMarkDown": "Select a version control provider from the dropdown"
+    },
     {
       "name": "versionControlProvider",
       "type": "pickList",
@@ -27,7 +40,8 @@
         "otherGit": "Other Git"
       },
       "required": false,
-      "helpMarkDown": "Select a version control provider from the dropdown"
+      "helpMarkDown": "Select a version control provider from the dropdown",
+      "visibleRule": "typeOfArtifact = source || typeOfArtifact = unlocked"
     },
     {
       "name": "github_connection",
