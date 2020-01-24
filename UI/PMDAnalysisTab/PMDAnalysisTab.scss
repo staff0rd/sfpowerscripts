@@ -2,23 +2,26 @@
 
 
 .container {
-    padding: 20px;
-    background-color: $backgroundColor;
-    width: 100%;
-  }
+  padding: 20px;
+  background-color: $backgroundColor;
+  width: 100%;
+}
   
- 
-  .pmd-card-metrics-header{
-      display: block;
-  }
+.pmd-card-metrics-header{
+  display: block;
+}
   
-  .pmd-card-metrics-measure{
-    display: block;
+.pmd-card-metrics-measure{
+  display: block;
 }
 
 .centered {
-    height: 100vh; 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+  height: 100vh; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.flex-row {
+  display: flex;
+}
