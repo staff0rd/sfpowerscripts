@@ -18,7 +18,7 @@
       "name": "method",
       "type": "pickList",
       "label": "Authentication Method",
-      "defaultValue": "JWT",
+      "defaultValue": "ServiceConnection",
       "options": {
         "ServiceConnection": "ServiceConnection",
         "JWT": "JWT",

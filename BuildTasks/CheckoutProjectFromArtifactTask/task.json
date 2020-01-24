@@ -7,13 +7,26 @@
   "category": "Utility",
   "author": "azlam.abdulsalam",
   "version": {
-    "Major": 6,
+    "Major": 8,
     "Minor": 0,
     "Patch": 0
   },
   "runsOn": ["Agent"],
-  "instanceNameFormat": "Checkout $(artifactname) from Git",
+  "instanceNameFormat": "Checkout $(artifactname) from associated build pipeline",
   "inputs": [
+    {
+      "name": "typeOfArtifact",
+      "type": "pickList",
+      "label": "Select the version control provider",
+      "defaultValue": "source",
+      "options": {
+        "source": "Source Deployment",
+        "delta": "Delta Deployment",
+        "unlocked": "Unlocked Package"
+      },
+      "required": false,
+      "helpMarkDown": "Select a version control provider from the dropdown"
+    },
     {
       "name": "versionControlProvider",
       "type": "pickList",
@@ -24,10 +37,11 @@
         "githubEnterprise": "GitHub Enterprise",
         "bitbucket": "BitBucket Cloud",
         "azureRepo": "Azure Repo",
-        "otherGit": "Other Git"
+        "otherGit": "Other Git",
       },
       "required": false,
-      "helpMarkDown": "Select a version control provider from the dropdown"
+      "helpMarkDown": "Select a version control provider from the dropdown",
+      "visibleRule": "typeOfArtifact = source || typeOfArtifact = unlocked"
     },
     {
       "name": "github_connection",

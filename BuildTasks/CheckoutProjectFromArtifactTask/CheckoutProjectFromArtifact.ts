@@ -11,46 +11,49 @@ async function run() {
     AppInsights.setupAppInsights(tl.getBoolInput("isTelemetryEnabled", true));
 
     const artifact = tl.getInput("artifact", true);
-    const version_control_provider: string = tl.getInput(
-      "versionControlProvider",
-      true
-    );
-
-    let connection: string;
-    switch (version_control_provider) {
-      case "github":
-        connection = tl.getInput("github_connection", true);
-        break;
-      case "githubEnterprise":
-        connection = tl.getInput("github_enterprise_connection", true);
-        break;
-      case "bitbucket":
-        connection = tl.getInput("bitbucket_connection", true);
-        break;
-    }
-
+    const artifact_type = tl.getInput("typeOfArtifact", true);
+    let version_control_provider: string;
     let token;
     let username: string;
-    if (version_control_provider == "azureRepo") {
-      token = tl.getVariable("system.accessToken");
-    } else if (
-      version_control_provider == "github" ||
-      version_control_provider == "githubEnterprise"
-    ) {
-      token = tl.getEndpointAuthorizationParameter(
-        connection,
-        "AccessToken",
-        true
-      );
-    } else if (version_control_provider == "bitbucket") {
-      token = tl.getEndpointAuthorizationParameter(
-        connection,
-        "AccessToken",
-        true
-      );
-    } else {
-      username = tl.getInput("username", true);
-      token = tl.getInput("password", true);
+
+    if (artifact_type != "delta") {
+      version_control_provider = tl.getInput("versionControlProvider", true);
+
+      let connection: string;
+      switch (version_control_provider) {
+        case "github":
+          connection = tl.getInput("github_connection", true);
+          break;
+        case "githubEnterprise":
+          connection = tl.getInput("github_enterprise_connection", true);
+          break;
+        case "bitbucket":
+          connection = tl.getInput("bitbucket_connection", true);
+          break;
+      }
+
+    
+      if (version_control_provider == "azureRepo") {
+        token = tl.getVariable("system.accessToken");
+      } else if (
+        version_control_provider == "github" ||
+        version_control_provider == "githubEnterprise"
+      ) {
+        token = tl.getEndpointAuthorizationParameter(
+          connection,
+          "AccessToken",
+          true
+        );
+      } else if (version_control_provider == "bitbucket") {
+        token = tl.getEndpointAuthorizationParameter(
+          connection,
+          "AccessToken",
+          true
+        );
+      } else {
+        username = tl.getInput("username", true);
+        token = tl.getInput("password", true);
+      }
     }
 
     let artifact_directory = tl.getVariable("system.artifactsDirectory");
@@ -80,32 +83,47 @@ async function run() {
 
     console.log(`Source Directory created at ${local_source_directory}`);
 
-    //Strinp https
-    const removeHttps = input => input.replace(/^https?:\/\//, "");
-
-    let repository_url = removeHttps(package_metadata.repository_url);
-
-    const git = simplegit(local_source_directory);
-
-    let remote: string;
     if (
-      version_control_provider == "bitbucket" ||
-      version_control_provider == "azureRepo"
+      package_metadata_json["package_type"] == "source" ||
+      package_metadata_json["package_type"] == "unlocked"
     ) {
-      remote = `https://x-token-auth:${token}@${repository_url}`;
-    } else if (
-      version_control_provider == "github" ||
-      version_control_provider == "githubEnterprise"
-    ) {
-      remote = `https://${token}:x-oauth-basic@${repository_url}`;
-    } else if (version_control_provider == "otherGit") {
-      remote = `https://${username}:${token}@${repository_url}`;
+      //Strinp https
+      const removeHttps = input => input.replace(/^https?:\/\//, "");
+
+      let repository_url = removeHttps(package_metadata.repository_url);
+
+      const git = simplegit(local_source_directory);
+
+      let remote: string;
+      if (
+        version_control_provider == "bitbucket" ||
+        version_control_provider == "azureRepo"
+      ) {
+        remote = `https://x-token-auth:${token}@${repository_url}`;
+      } else if (
+        version_control_provider == "github" ||
+        version_control_provider == "githubEnterprise"
+      ) {
+        remote = `https://${token}:x-oauth-basic@${repository_url}`;
+      } else if (version_control_provider == "otherGit") {
+        remote = `https://${username}:${token}@${repository_url}`;
+      }
+
+      await git.silent(false).clone(remote, local_source_directory);
+      await git.checkout(package_metadata.sourceVersion);
+
+      console.log(`Checked Out ${package_metadata.sourceVersion} sucessfully`);
+    } else if (package_metadata_json["package_type"] == "delta") {
+      let delta_artifact_location = path.join(
+        artifact_directory,
+        artifact,
+        "sfpowerscripts_delta_package"
+      );
+
+      fs.copySync(this.local_source_directory, this.delta_artifact_location, {
+        overwrite: true
+      });
     }
-
-    await git.silent(false).clone(remote, local_source_directory);
-    await git.checkout(package_metadata.sourceVersion);
-
-    console.log(`Checked Out ${package_metadata.sourceVersion} sucessfully`);
 
     fs.readdirSync(local_source_directory).forEach(file => {
       console.log(file);
