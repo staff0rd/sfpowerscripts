@@ -26,3 +26,14 @@
 .flex-row {
   display: flex;
 }
+
+.pmd-card-item {
+  background-color: #fff;
+  box-shadow: 0 3.2px 7.2px 0 rgba(0, 0, 0, .132),0 .6px 1.8px 0 rgba(0, 0, 0, .108);
+  border: none;
+  height: 125px;
+}
+
+.card-metrics-value {
+  font-size: 1.75rem;
+}
