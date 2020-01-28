@@ -257,7 +257,7 @@ class PMDAnalysisTab extends React.Component<{}, IBuildInfoTabState> {
             <Table
                 ref={registerChild}
                 width={width}
-                height={300}
+                height={500}
                 autoHeight={ false }
                 headerHeight={20}
                 rowHeight={30}
