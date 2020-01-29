@@ -1,5 +1,5 @@
 import child_process = require("child_process");
-import { isNullOrUndefined } from "util";
+import { isNullOrUndefined, isNumber } from "util";
 const fs = require("fs");
 const path = require("path");
 
@@ -7,7 +7,9 @@ export default class IncrementProjectBuildNumberImpl {
   public constructor(
     private project_directory: string,
     private sfdx_package: string,
-    private segment
+    private segment: string,
+    private appendBuildNumber: boolean,
+    private buildNumber: string
   ) {}
 
   public async exec(): Promise<string> {
@@ -48,8 +50,18 @@ export default class IncrementProjectBuildNumberImpl {
       throw new Error("NEXT not supported for build number");
     }
 
-    if (this.segment == "BuildNumber")
+    if (this.segment == "BuildNumber" && !this.appendBuildNumber)
       segments[3] = String(Number(segments[3]) + 1);
+
+    if (this.appendBuildNumber) {
+      let numberToBeAppended = parseInt(this.buildNumber);
+
+      if (isNaN(numberToBeAppended))
+        throw new Error("BuildNumber should be a number");
+      else if (numberToBeAppended > 999)
+        throw new Error("BuildNumber should be less than 999");
+      else segments[3] = this.buildNumber;
+    }
 
     selected_package[
       "versionNumber"
@@ -57,11 +69,12 @@ export default class IncrementProjectBuildNumberImpl {
 
     console.log(`Updated Version : ${selected_package["versionNumber"]}`);
 
-    fs.writeFileSync(
-      project_config_path,
-      JSON.stringify(project_json, null, 4)
-    );
-
+    if (!this.appendBuildNumber) {
+      fs.writeFileSync(
+        project_config_path,
+        JSON.stringify(project_json, null, 4)
+      );
+    }
 
     return selected_package["versionNumber"];
   }

@@ -10,16 +10,20 @@ async function run() {
     const sfdx_package: string = tl.getInput("package", false);
     let project_directory: string = tl.getInput("project_directory", false);
     const set_build_number: boolean = tl.getBoolInput("set_build_number",true);
+    const appendBuildNumber: boolean = tl.getBoolInput("appendBuildNumber",false);
 
     const commit_changes: boolean = tl.getBoolInput("commit_changes",false);
 
     AppInsights.setupAppInsights(tl.getBoolInput("isTelemetryEnabled",true));
    
+     const runNumber = tl.getVariable('build.buildNumber');
 
     let incrementProjectBuildNumberImpl: IncrementProjectBuildNumberImpl = new IncrementProjectBuildNumberImpl(
       project_directory,
       sfdx_package,
-      segment
+      segment,
+      appendBuildNumber,
+      runNumber
     );
 
     let version_number: string = await incrementProjectBuildNumberImpl.exec();
@@ -34,9 +38,8 @@ async function run() {
     let repo_localpath = tl.getVariable("build.repository.localpath");
   
 
-    if(commit_changes)
+    if(!appendBuildNumber && commit_changes)
     {
-
 
       child_process.execSync(" git config user.email sfpowerscripts@dxscale");
       child_process.execSync(" git config user.name sfpowerscripts");

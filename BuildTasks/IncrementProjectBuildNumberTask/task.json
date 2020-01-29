@@ -7,7 +7,7 @@
   "category": "Build",
   "author": "azlam.abdulsalam",
   "version": {
-    "Major": 4,
+    "Major": 5,
     "Minor": 0,
     "Patch": 0
   },
@@ -29,9 +29,18 @@
       "helpMarkDown": "Select the segment of the version"
     },
     {
+      "name": "appendBuildNumber",
+      "type": "boolean",
+      "label": "Set the build segment of the version number to the build number rather than incremenenting",
+      "defaultValue": false,
+      "required": false,
+      "helpMarkDown": "Set the build segment of the version number to the build number rather than incremenenting",
+      "visibleRule": "segment = BuildNumber"
+    },
+    {
       "name": "set_build_number",
       "type": "boolean",
-      "label": "Set the pipeline's build number to the the project's incremented version number",
+      "label": "Display the pipeline's build number based on  the project's incremented version number",
       "defaultValue": true,
       "required": true,
       "helpMarkDown": "Set the pipeline's build number to the the project's incremented version number"
@@ -56,9 +65,10 @@
       "name": "commit_changes",
       "type": "boolean",
       "label": "Create a commit of incremented sfdx-project.json",
-      "defaultValue": true,
+      "defaultValue": false,
       "required": false,
-      "helpMarkDown": "Mark this if you want to commit the sfdx-project json to the repository, Please note this will not push to the repo only commits in the local checked out repo, You would need to have a push to the repo at the end of the packaging task if everything is successfull"
+      "helpMarkDown": "Mark this if you want to commit the sfdx-project json to the repository, Please note this will not push to the repo only commits in the local checked out repo, You would need to have a push to the repo at the end of the packaging task if everything is successfull",
+      "visibleRule": "appendBuildNumber = false"
     },
     {
       "name": "pushchanges",
@@ -66,7 +76,8 @@
       "label": "Push incremented version changes to the repository",
       "defaultValue": false,
       "required": false,
-      "helpMarkDown": "Mark this if you want to push the committed  sfdx-project json to the repository with the incremented version if every subsequent task succeeds"
+      "helpMarkDown": "Mark this if you want to push the committed  sfdx-project json to the repository with the incremented version if every subsequent task succeeds",
+      "visibleRule": "appendBuildNumber = false"
     },
     {
       "name": "pushoption",
