@@ -8,12 +8,21 @@ const fs = require("fs");
 async function run() {
   try {
     const project = tl.getInput("package", false);
-    const project_directory = tl.getInput("project_directory", false);
-    const version_name: string = tl.getInput("version_name", false);
-    let revision_from: string = tl.getInput("revision_from", true);
-    const set_build_number: boolean = tl.getBoolInput("set_build_number",true);
+    const projectDirectory = tl.getInput("project_directory", false);
+    const versionName: string = tl.getInput("version_name", false);
+    const setBuildName: boolean = tl.getBoolInput("set_build_name",true);
 
+
+
+    let revisionFrom: string = tl.getInput("revision_from", true);
     let revision_to: string = tl.getInput("revision_to", false);
+    let options:any = {};
+
+    options['bypass_directories']=tl.getInput("bypass_directories", false);
+    options['only_diff_for']=tl.getInput("only_diff_for", false);
+    
+
+
     if (isNullOrUndefined(revision_to)) {
       revision_to = tl.getVariable("build.sourceVersion");
     }
@@ -26,19 +35,20 @@ async function run() {
       true
     );
 
-    if (set_build_number) {
-      console.log(`Updating build number to ${version_name}`);
-      tl.updateBuildNumber(version_name);
+    if (setBuildName) {
+      console.log(`Updating build number to ${versionName}`);
+      tl.updateBuildNumber(versionName);
     }
 
     AppInsights.setupAppInsights(tl.getBoolInput("isTelemetryEnabled", true));
 
     let createDeltaPackageImp = new CreateDeltaPackageImpl(
-      project_directory,
+      projectDirectory,
       project,
-      revision_from,
+      revisionFrom,
       revision_to,
-      generate_destructivemanifest
+      generate_destructivemanifest,
+      options
     );
     let command = await createDeltaPackageImp.buildExecCommand();
 
@@ -72,7 +82,7 @@ async function run() {
         sourceVersion: commit_id,
         repository_url: repository_url,
         package_type: "delta",
-        version_name: version_name
+        version_name: versionName
       };
 
       fs.writeFileSync(
