@@ -7,7 +7,7 @@
   "category": "Utility",
   "author": "azlam.abdulsalam",
   "version": {
-    "Major": 6,
+    "Major": 7,
     "Minor": 0,
     "Patch": 0
   },
@@ -83,7 +83,7 @@
     {
       "name": "isdevhub",
       "type": "boolean",
-      "label": "Authenticate this org as a DevHub",
+      "label": "Authenticate this org as a Production/DevHub",
       "defaultValue": false,
       "required": true,
       "helpMarkDown": "Enable this option if a devhub is to be authenticated",
