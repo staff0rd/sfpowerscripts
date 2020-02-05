@@ -9,7 +9,7 @@ export default class TriggerApexTestImpl {
     //Print Test in Human Reable Format and also store it in staging directory
     let child = child_process.exec(
       this.buildExecCommand(),
-      { encoding: "utf8" },
+      { maxBuffer: 1024 * 1024*5,encoding: "utf8" },
       (error, stdout, stderr) => {
         if (error) throw error;
       }

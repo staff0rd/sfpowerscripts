@@ -1,6 +1,6 @@
 {
   "source": "userInterface",
-  "revision": 4,
+  "revision": 5,
   "description": null,
   "createdBy": "{}",
   "createdOn": "",
@@ -117,7 +117,7 @@
             {
               "environment": {},
               "taskId": "d8950cd3-2bf4-4b50-bb75-b9358f741951",
-              "version": "4.*",
+              "version": "5.*",
               "name": "Install SFDX",
               "refName": "",
               "enabled": true,
@@ -128,6 +128,7 @@
               "overrideInputs": {},
               "condition": "succeeded()",
               "inputs": {
+                "salesforce_api_version": "",
                 "sfdx_cli_version": "latest",
                 "sfpowerkit_version": "latest",
                 "plugins": "",
@@ -137,7 +138,7 @@
             {
               "environment": {},
               "taskId": "5eb34b28-fdd4-4904-9a3e-d3ff63130f16",
-              "version": "5.*",
+              "version": "7.*",
               "name": "Authenticate  $(env.name) using Credentials",
               "refName": "",
               "enabled": true,
@@ -149,6 +150,7 @@
               "condition": "succeeded()",
               "inputs": {
                 "method": "Credentials",
+                "salesforce_connection": "",
                 "jwt_key_file": "",
                 "username": "$(env.user)",
                 "password": "$(env.password)",
