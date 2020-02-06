@@ -10,6 +10,10 @@ The changelog is available at [https://sfpowerscripts.com/changelog/](https://sf
 
 - PMD Apex Analysis Tab 
 
+## Service Connection
+
+-  Service Connection to Salesforce Org using Username/Password/Security Token which can be utilized across any of the below tasks
+
 ## Common/Utility Tasks
 
 - Install SFDX CLI along with SFPowerkit Plugin
@@ -21,7 +25,8 @@ The changelog is available at [https://sfpowerscripts.com/changelog/](https://sf
 
 ## Deployment Related Tasks
 
-- Checkout a source based artifact from Git using PAT
+- Checkout a source based artifact from git server (using PAT against HTTP) or Azure DevOps supported Git Providers using Service Credential
+- Deploy a delta (diff between two git commit id's )
 - Deploy a source format based repo to an org (scratch org/sandbox/prod)
 - Deploy an unlocked package to an org
 - Deploy destructive manifest to an org
@@ -59,7 +64,7 @@ For eg: a Pull Request validation for an unlocked package  should feature the ta
 
 #### Getting Started
 
-Checkout SFPowerscripts documentation here on how to [Get Started](https://sfpowerscripts.com/gettingstarted/) with these tasks. The [repo](https://github.com/azlamsalam/sfpowerscripts/tree/release/SamplePipelines) also features sample pipelines that demonstrate the usage of pipelines.
+Checkout SFPowerscripts documentation here on how to [Get Started](https://sfpowerscripts.com/gettingstarted/) with these tasks. The [repo](https://github.com/azlamsalam/sfpowerscripts/tree/master/SamplePipelines) also features sample pipelines that demonstrate the usage of pipelines.
 
 #### What if there is an issue with the extension?
 
