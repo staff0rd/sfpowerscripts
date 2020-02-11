@@ -47,7 +47,7 @@ export default class IncrementProjectBuildNumberImpl {
     if (this.segment == "Patch") segments[2] = String(Number(segments[2]) + 1);
 
     if (segments[3] == "NEXT") {
-      throw new Error("NEXT not supported for build number");
+      throw new Error("NEXT not supported for this task, Please keep as the build version, which then this task can manipulate");
     }
 
     if (this.segment == "BuildNumber" && !this.appendBuildNumber)
