@@ -211,8 +211,5 @@
   "uri": "",
   "path": "\\",
   "type": "build",
-  "queueStatus": "enabled",
-  "revision": 8,
-  "createdDate": "",
-  "project": "{}"
+  "queueStatus": "enabled"
 }
