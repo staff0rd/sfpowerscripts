@@ -37,7 +37,11 @@ export default class TriggerApexTestImpl {
     command += ` -d  ${this.test_options["outputdir"]}`;
 
     //testlevel
-    command += ` -l ${this.test_options["testlevel"]}`;
+    // allowed options: RunLocalTests, RunAllTestsInOrg, RunSpecifiedTests
+    if (this.test_options["testlevel"] !== "RunApexTestSuite") {
+      command += ` -l ${this.test_options["testlevel"]}`;
+    }
+
 
     if (this.test_options["testlevel"] == "RunSpecifiedTests") {
       command += ` -t ${this.test_options["specified_tests"]}`;

@@ -49,11 +49,12 @@
             "refName": "build",
             "task": {
               "id": "f67abc38-a5b8-4196-946e-ba81df4cd57c",
-              "versionSpec": "4.*",
+              "versionSpec": "5.*",
               "definitionType": "task"
             },
             "inputs": {
               "segment": "BuildNumber",
+              "appendBuildNumber": "false",
               "set_build_number": "true",
               "package": "",
               "project_directory": "",
@@ -121,7 +122,7 @@
       "fetchDepth": "0",
       "gitLfsSupport": "false",
       "reportBuildStatus": "true",
-      "connectedServiceId": "$GitHub_c0b78492$",
+      "connectedServiceId": "$GitHub_8781ce26$",
       "skipSyncSource": "false",
       "labelSourcesFormat": "$(build.buildNumber)",
       "labelSources": "0"
@@ -156,7 +157,7 @@
   "path": "\\",
   "type": "build",
   "queueStatus": "enabled",
-  "revision": 4,
+  "revision": 5,
   "createdDate": "",
   "project": "{}"
 }
