@@ -9,7 +9,8 @@
   "dependencies": {
     "azure-pipelines-task-lib": "^2.8.0",
     "simple-git":"^1.126.0",
-    "applicationinsights": "^1.6.0"
+    "applicationinsights": "^1.6.0",
+    "fs-extra": "^8.1.0"
   },
   "devDependencies": {
     "@types/node": "^12.7.2"

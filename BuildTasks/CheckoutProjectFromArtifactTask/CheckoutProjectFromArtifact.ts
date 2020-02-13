@@ -1,10 +1,8 @@
 import tl = require("azure-pipelines-task-lib/task");
-import child_process = require("child_process");
-var fs = require("fs");
+var fs = require("fs-extra");
 const path = require("path");
 import simplegit from "simple-git/promise";
 import { AppInsights } from "../Common/AppInsights";
-var shell = require("shelljs");
 
 async function run() {
   try {
@@ -32,7 +30,6 @@ async function run() {
           break;
       }
 
-    
       if (version_control_provider == "azureRepo") {
         token = tl.getVariable("system.accessToken");
       } else if (
@@ -83,9 +80,12 @@ async function run() {
 
     console.log(`Source Directory created at ${local_source_directory}`);
 
+    tl.debug(package_metadata.package_type);
+    console.log(package_metadata.package_type);
+
     if (
-      package_metadata_json["package_type"] == "source" ||
-      package_metadata_json["package_type"] == "unlocked"
+      package_metadata.package_type === "source" ||
+      package_metadata.package_type === "unlocked"
     ) {
       //Strinp https
       const removeHttps = input => input.replace(/^https?:\/\//, "");
@@ -95,10 +95,13 @@ async function run() {
       const git = simplegit(local_source_directory);
 
       let remote: string;
-      if (
-        version_control_provider == "bitbucket" ||
-        version_control_provider == "azureRepo"
-      ) {
+      if (version_control_provider == "azureRepo") {
+        //Fix Issue https://developercommunity.visualstudio.com/content/problem/411770/devops-git-url.html
+        repository_url = repository_url.substring(
+          repository_url.indexOf("@") + 1
+        );
+        remote = `https://x-token-auth:${token}@${repository_url}`;
+      } else if (version_control_provider == "bitbucket") {
         remote = `https://x-token-auth:${token}@${repository_url}`;
       } else if (
         version_control_provider == "github" ||
@@ -113,18 +116,27 @@ async function run() {
       await git.checkout(package_metadata.sourceVersion);
 
       console.log(`Checked Out ${package_metadata.sourceVersion} sucessfully`);
-    } else if (package_metadata_json["package_type"] == "delta") {
+    } else if (package_metadata.package_type === "delta") {
       let delta_artifact_location = path.join(
         artifact_directory,
         artifact,
         "sfpowerscripts_delta_package"
       );
 
-      fs.copySync(this.local_source_directory, this.delta_artifact_location, {
+      tl.debug(`Delta Directory is at ${delta_artifact_location}`);
+
+      tl.debug("Files in Delta Location");
+      fs.readdirSync(delta_artifact_location).forEach(file => {
+        tl.debug(file);
+      });
+
+      tl.debug("Copying Files to a proper directory");
+      fs.copySync(delta_artifact_location, local_source_directory,{
         overwrite: true
       });
     }
 
+    console.log("Files in source Location");
     fs.readdirSync(local_source_directory).forEach(file => {
       console.log(file);
     });

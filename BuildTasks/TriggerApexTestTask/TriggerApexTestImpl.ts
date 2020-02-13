@@ -9,7 +9,7 @@ export default class TriggerApexTestImpl {
     //Print Test in Human Reable Format and also store it in staging directory
     let child = child_process.exec(
       this.buildExecCommand(),
-      { encoding: "utf8" },
+      { maxBuffer: 1024 * 1024*5,encoding: "utf8" },
       (error, stdout, stderr) => {
         if (error) throw error;
       }
@@ -37,7 +37,11 @@ export default class TriggerApexTestImpl {
     command += ` -d  ${this.test_options["outputdir"]}`;
 
     //testlevel
-    command += ` -l ${this.test_options["testlevel"]}`;
+    // allowed options: RunLocalTests, RunAllTestsInOrg, RunSpecifiedTests
+    if (this.test_options["testlevel"] !== "RunApexTestSuite") {
+      command += ` -l ${this.test_options["testlevel"]}`;
+    }
+
 
     if (this.test_options["testlevel"] == "RunSpecifiedTests") {
       command += ` -t ${this.test_options["specified_tests"]}`;

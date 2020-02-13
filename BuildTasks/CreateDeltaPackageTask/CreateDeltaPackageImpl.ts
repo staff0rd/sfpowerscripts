@@ -4,17 +4,18 @@ import { isNullOrUndefined } from "util";
 
 export default class CreateDeltaPackageImpl {
   public constructor(
-    private project_directory: string,
+    private projectDirectory: string,
     private project: string,
-    private revision_from: string,
-    private revision_to: string,
-    private generate_destructivemanifest: boolean
+    private revisionFrom: string,
+    private revisionTo: string,
+    private generateDestructiveManifest: boolean,
+    private options:any
   ) {}
 
   public async exec(command: string): Promise<void> {
     let child = child_process.exec(
       command,
-      { encoding: "utf8", cwd: this.project_directory },
+      { encoding: "utf8", cwd: this.projectDirectory },
       (error, stdout, stderr) => {
         if (error) throw error;
       }
@@ -34,15 +35,28 @@ export default class CreateDeltaPackageImpl {
     let command;
     command = `npx sfdx sfpowerkit:project:diff`;
 
-    if (!isNullOrUndefined(this.revision_to))
-      command += ` -t  ${this.revision_to}`;
+    if (!isNullOrUndefined(this.revisionTo))
+      command += ` -t  ${this.revisionTo}`;
 
-    if (!isNullOrUndefined(this.revision_from))
-      command += ` -r  ${this.revision_from}`;
+    if (!isNullOrUndefined(this.revisionFrom))
+      command += ` -r  ${this.revisionFrom}`;
 
-    if (this.generate_destructivemanifest) command += ` -x`;
+    if (this.generateDestructiveManifest) command += ` -x`;
 
     command += ` -d  src_delta`;
+
+
+    if(!isNullOrUndefined(this.options['bypass_directories']))
+    command += ` -b  ${this.options['bypass_directories']}`;
+
+    if(!isNullOrUndefined(this.options['only_diff_for']))
+    command += ` -p   ${this.options['only_diff_for']}`;
+
+    if(!isNullOrUndefined(this.options['apiversion']))
+    command += ` --apiversion  ${this.options['apiversion']}`;
+
+
+
 
     return command;
   }

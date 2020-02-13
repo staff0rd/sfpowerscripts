@@ -3,7 +3,7 @@
     "id": "sfpowerscripts-dev",
     "publisher": "AzlamSalam",
     "name": "sfpowerscripts (dev)",
-    "version": "9.0.0",
+    "version": "9.0.13",
     "description": "Azure Pipelines tasks for working with Salesforce",
     "tags": [
         "Extension",
@@ -80,7 +80,7 @@
     "badges": [
         {
             "href": "https://dev.azure.com/azlamsalam/sfpowerscripts/_build?definitionId=8",
-            "uri": "https://dev.azure.com/azlamsalam/sfpowerscripts/_apis/build/status/sfpowerscripts/sfpowerscripts-release?branchName=release",
+            "uri": "https://dev.azure.com/azlamsalam/sfpowerscripts/_apis/build/status/sfpowerscripts/sfpowerscripts-release?branchName=master",
             "description": "Azure Pipelines SFPowerscripts Release"
         }
     ],

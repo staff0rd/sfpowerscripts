@@ -7,12 +7,14 @@ async function run() {
     AppInsights.setupAppInsights(tl.getBoolInput("isTelemetryEnabled", true));
 
     const isPushChanges = tl.getBoolInput("pushchanges", false);
-    const pushOption = tl.getInput("pushoption",false);
+    const pushOption = tl.getInput("pushoption", false);
 
-    let isToBePushed = pushOption == 'onSuccess'?  tl.getVariable("Agent.JobStatus") == "Succeeded" :true;
+    let isToBePushed =
+      pushOption == "onSuccess"
+        ? tl.getVariable("Agent.JobStatus") == "Succeeded"
+        : true;
 
     if (isPushChanges) {
-
       if (isToBePushed) {
         const version_control_provider: string = tl.getInput(
           "versionControlProvider",
@@ -55,7 +57,6 @@ async function run() {
           username = tl.getInput("username", true);
           token = tl.getInput("password", true);
         }
-
         //Strip https
         const removeHttps = input => input.replace(/^https?:\/\//, "");
 
@@ -63,13 +64,18 @@ async function run() {
           tl.getVariable("Build.Repository.Uri")
         );
 
+        tl.debug(`Repository URL ${repository_url}`);
+
         const git = simplegit(tl.getVariable("Build.Repository.LocalPath"));
 
         let remote: string;
-        if (
-          version_control_provider == "bitbucket" ||
-          version_control_provider == "azureRepo"
-        ) {
+        if (version_control_provider == "azureRepo") {
+          //Fix Issue https://developercommunity.visualstudio.com/content/problem/411770/devops-git-url.html
+          repository_url = repository_url.substring(
+            repository_url.indexOf("@") + 1
+          );
+          remote = `https://x-token-auth:${token}@${repository_url}`;
+        } else if (version_control_provider == "bitbucket") {
           remote = `https://x-token-auth:${token}@${repository_url}`;
         } else if (
           version_control_provider == "github" ||
@@ -86,13 +92,15 @@ async function run() {
             remote,
             `HEAD:${tl
               .getVariable("Build.SourceBranch")
-              .substring(tl.getVariable("Build.SourceBranch").indexOf("/", 5)+1)}`
+              .substring(
+                tl.getVariable("Build.SourceBranch").indexOf("/", 5) + 1
+              )}`
           );
-       console.log(`Pushed Incrmented sfdx-project.json to repository ${repository_url}`);
-      }
-      else
-      {
-        console.log("Skipping push to repository as previous tasks has failed")
+        console.log(
+          `Pushed Incrmented sfdx-project.json to repository ${repository_url}`
+        );
+      } else {
+        console.log("Skipping push to repository as previous tasks has failed");
       }
     }
 
