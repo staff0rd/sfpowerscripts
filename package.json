@@ -10,6 +10,7 @@
     "tfs"
   ],
   "scripts": {
+    "start": "webpack-dev-server --mode development",
     "clean": "rimraf build",
     "build:clean": "rimraf build && shx mkdir build",
     "build:copy": "node make copy",
@@ -28,8 +29,7 @@
     "package": "npm run build && npm run package:extension",
     "increment:version": "node make incrementversion",
     "package:extension": "tfx extension create --root build --output-path dist --manifest-globs vss-extension.json",
-    "publish": "node make.js publish",
-    "local:test":"webpack-dev-server --mode development"
+    "publish": "node make.js publish"
   },
   "author": "azlam.abdulsalam",
   "license": "MIT",
@@ -47,6 +47,7 @@
     "react": "~16.8.1",
     "react-dom": "~16.8.1",
     "react-loader-spinner": "^3.1.5",
+    "react-virtualized": "^9.21.2",
     "shelljs": "^0.8.3",
     "simple-git": "^1.126.0",
     "unzip-stream": "0.3.0"
@@ -77,7 +78,7 @@
     "tslint": "^5.19.0",
     "typescript": "^3.5.0",
     "typestrict": "^1.0.2",
-    "webpack": "^4.22.0",
+    "webpack": "^4.41.5",
     "webpack-cli": "^3.1.2"
   }
 }
