@@ -29,8 +29,7 @@
     "package": "npm run build && npm run package:extension",
     "increment:version": "node make incrementversion",
     "package:extension": "tfx extension create --root build --output-path dist --manifest-globs vss-extension.json",
-    "publish": "node make.js publish",
-    "local:test":"webpack-dev-server --mode development"
+    "publish": "node make.js publish"
   },
   "author": "azlam.abdulsalam",
   "license": "MIT",

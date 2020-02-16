@@ -1,5 +1,10 @@
 @import "azure-devops-ui/_coreStyles.scss";
 
+html,body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+}
 
 .container {
   padding: 20px;
@@ -36,4 +41,39 @@
 
 .card-metrics-value {
   font-size: 1.75rem;
+}
+
+.loader-container {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  padding: 3rem;
+  box-sizing: border-box;
+  flex-direction: column;
+  text-align: center;
+}
+
+.loader {
+  border: 6px solid #f3f3f3;
+  border-top: 6px solid #737373;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 2s linear infinite;
+  margin-bottom: 0.5rem;
+  align-self: center;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.pmd-tiles {
+  margin-bottom: 2rem;
+}
+
+.ReactVirtualized__Table__headerRow {
+  height: 30px !important;
+  background-color: #ececec;
 }

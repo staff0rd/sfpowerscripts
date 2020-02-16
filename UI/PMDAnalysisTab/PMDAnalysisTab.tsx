@@ -122,7 +122,7 @@ class PMDAnalysisTab extends React.Component<{}, IBuildInfoTabState> {
     );
     this.result = await codeAnalysisProcessor.processCodeQualityFromArtifact();
     this.setState({
-      isDataLoaded: false,
+      isDataLoaded: true,
       criticaldefects: this.result.criticaldefects,
       violationCount: this.result.violationCount,
       affectedFileCount: this.result.affectedFileCount,
@@ -188,19 +188,6 @@ class PMDAnalysisTab extends React.Component<{}, IBuildInfoTabState> {
     });
   }
 
-  // compare = (a, b) => {
-  //   const bandA = a[key].toUpperCase();
-  //   const bandB = b[key].toUpperCase();
-  
-  //   let comparison = 0;
-  //   if (bandA > bandB) {
-  //     comparison = 1;
-  //   } else if (bandA < bandB) {
-  //     comparison = -1;
-  //   }
-  //   return comparison;
-  // }
-
   _sort({sortBy, sortDirection}) {
     let sortedList = this._sortList({sortBy, sortDirection});
 
@@ -232,50 +219,59 @@ class PMDAnalysisTab extends React.Component<{}, IBuildInfoTabState> {
     
     return (
       <div className="container">
-        <div className="flex-row">
-          <MetricsComponent
-            title={"Total Issues"}
-            value={this.state.violationCount}
-          />
-          <MetricsComponent
-            title={"Critical Defects"}
-            value={this.state.criticaldefects}
-          />
-          <MetricsComponent
-            title={"Affected"}
-            value={this.state.affectedFileCount}
-          />
-        </div>
-        <p>Critical and Major Defects Summary - Full Report Available in Artifacts</p>
-        <InfiniteLoader
-          isRowLoaded={this._isRowLoaded}
-          loadMoreRows={this._loadMoreRows}
-          rowCount={this.state.details.length}>
-          {({onRowsRendered, registerChild}) => (
-          <AutoSizer>
-              {({width, height}) => (
-            <Table
-                ref={registerChild}
-                width={width}
-                height={500}
-                autoHeight={ false }
-                headerHeight={20}
-                rowHeight={30}
-                rowCount={this.state.details.length}
-                onRowsRendered={onRowsRendered}
-                sort={this._sort}
-                sortBy={this.state.sortBy}
-                sortDirection={this.state.sortDirection}
-                rowGetter={ rowGetter } >  
-                <Column label="File Name" dataKey="filename" width={250} />
-                <Column label="Line Number" dataKey="beginLine" width={150 } />
-                <Column label="Priority" dataKey="priority"  width={150 } />
-                <Column label="Problem" dataKey="problem" />
-            </Table>
-              )}
-          </AutoSizer>
+        {!this.state.isDataLoaded && (
+          <div className="loader-container">
+            <div className="loader"></div>
+            <span>Loading...</span>
+          </div>
         )}
-        </InfiniteLoader>
+        {this.state.isDataLoaded && (
+          <>
+          <div className="flex-row pmd-tiles">
+            <MetricsComponent
+              title={"Total Issues"}
+              value={this.state.violationCount}
+            />
+            <MetricsComponent
+              title={"Critical Defects"}
+              value={this.state.criticaldefects}
+            />
+            <MetricsComponent
+              title={"Affected"}
+              value={this.state.affectedFileCount}
+            />
+          </div>
+          <InfiniteLoader
+            isRowLoaded={this._isRowLoaded}
+            loadMoreRows={this._loadMoreRows}
+            rowCount={this.state.details.length}>
+            {({onRowsRendered, registerChild}) => (
+            <AutoSizer>
+                {({width, height}) => (
+              <Table
+                  ref={registerChild}
+                  width={width}
+                  height={500}
+                  autoHeight={ false }
+                  headerHeight={20}
+                  rowHeight={30}
+                  rowCount={this.state.details.length}
+                  onRowsRendered={onRowsRendered}
+                  sort={this._sort}
+                  sortBy={this.state.sortBy}
+                  sortDirection={this.state.sortDirection}
+                  rowGetter={ rowGetter } >  
+                  <Column label="File Name" dataKey="filename" width={600} />
+                  <Column label="Line Number" dataKey="beginLine" width={150 } />
+                  <Column label="Priority" dataKey="priority"  width={150 } />
+                  <Column label="Problem" dataKey="problem" />
+              </Table>
+                )}
+            </AutoSizer>
+          )}
+          </InfiniteLoader>
+          </>
+        )}
       </div>
     );
   }
