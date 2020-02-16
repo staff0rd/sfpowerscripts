@@ -208,7 +208,6 @@ updateExtensionManifest = function(dir, options, isOriginalFile) {
     manifest.baseUri = "https://localhost:3000/build/";
   } 
   else if (options.stage == "beta" && !isOriginalFile) {
-    manifest.version = options.version;
     manifest.id = "sfpowerscripts" + "-" + "beta";
     manifest.name = "sfpowerscripts" + " (" + "beta" + ")";
     manifest.public = false;
