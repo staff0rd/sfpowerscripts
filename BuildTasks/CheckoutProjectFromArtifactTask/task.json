@@ -37,7 +37,7 @@
         "githubEnterprise": "GitHub Enterprise",
         "bitbucket": "BitBucket Cloud",
         "azureRepo": "Azure Repo",
-        "otherGit": "Other Git",
+        "otherGit": "Other Git"
       },
       "required": false,
       "helpMarkDown": "Select a version control provider from the dropdown",
