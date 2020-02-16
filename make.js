@@ -144,11 +144,18 @@ target.publish = function() {
     );
   } 
   else if (options.stage == "beta") {
+
+
+    updateExtensionManifest(__dirname, options, false);
+    console.log(`version found ${version}`);
+    console.log(`Package Path found ${packagesPath}`);
+
+
     shell.exec(
       'tfx extension publish --vsix "' +
         packagesPath +
         "/AzlamSalam.sfpowerscripts-beta-" +
-        options.version +
+        version +
         '.vsix"' +
         " --share-with dxatscale --token " +
         options.token
@@ -209,6 +216,7 @@ updateExtensionManifest = function(dir, options, isOriginalFile) {
     manifest.id = "sfpowerscripts" + "-" + "beta";
     manifest.name = "sfpowerscripts" + " (" + "beta" + ")";
     manifest.public = false;
+    version = manifest.version;
   } 
   else {
     manifest.id = "sfpowerscripts";
