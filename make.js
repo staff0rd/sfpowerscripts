@@ -107,6 +107,7 @@ target.incrementversion = function() {
       options.public = false;
       updateExtensionManifest(__dirname, options, false);
      // tl.updateBuildNumber(options.version);
+      console.log("Updated Version is "+options.version)
       tl.updateReleaseName(options.version);
       break;
     case "beta":
