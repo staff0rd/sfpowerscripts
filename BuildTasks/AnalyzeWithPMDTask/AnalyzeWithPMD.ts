@@ -2,22 +2,39 @@ import tl = require("azure-pipelines-task-lib/task");
 import AnalyzeWithPMDImpl from "./AnalyzeWithPMDImpl";
 import { isNullOrUndefined } from "util";
 import FileSystemInteractions from "../Common/FileSystemInteractions";
-import os from "os";
-import path from "path";
+const os = require("os");
+const path = require("path");
 import xml2js = require("xml2js");
-import fs from "fs";
+const fs = require("fs");
 import { AppInsights } from "../Common/AppInsights";
 
 async function run() {
   try {
     console.log("Test.. PMD");
 
-    let stagingDir: string = path.join(
+
+    
+    let taskType = tl.getVariable("Release.ReleaseId") ? "Release" : "Build";
+    let stagingDir:string='';
+    if(taskType=='Build')
+    {
+     stagingDir = path.join(
       tl.getVariable("build.artifactStagingDirectory"),
       ".codeAnalysis"
     );
 
     console.log(stagingDir);
+    }
+    else
+    {
+
+      let stagingDir = path.join(
+        ".codeAnalysis"
+      );
+      console.log(stagingDir);
+    }
+
+   
 
     const project_directory = tl.getInput("project_directory", false);
     const directory: string = tl.getInput("directory", false);
@@ -25,7 +42,7 @@ async function run() {
 
     AppInsights.setupAppInsights(tl.getBoolInput("isTelemetryEnabled", true));
 
-    let rulesetpath: string;
+    let rulesetpath: string="";
     if (ruleset == "Custom" && isNullOrUndefined(rulesetpath)) {
       rulesetpath = tl.getInput("rulesetpath", false);
       AppInsights.trackTaskEvent(
@@ -42,7 +59,7 @@ async function run() {
 
     const isToBreakBuild = tl.getBoolInput("isToBreakBuild", false);
 
-    let result: [number, number, number];
+    let result: [number, number, number]=[0,0,0];
 
     let pmdImpl: AnalyzeWithPMDImpl = new AnalyzeWithPMDImpl(
       project_directory,
