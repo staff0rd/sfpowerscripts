@@ -2,10 +2,10 @@ import tl = require("azure-pipelines-task-lib/task");
 import AnalyzeWithPMDImpl from "./AnalyzeWithPMDImpl";
 import { isNullOrUndefined } from "util";
 import FileSystemInteractions from "../Common/FileSystemInteractions";
-const os = require("os");
-const path = require("path");
+import os from "os";
+import path from "path";
 import xml2js = require("xml2js");
-const fs = require("fs");
+import fs from "fs";
 import { AppInsights } from "../Common/AppInsights";
 
 async function run() {
@@ -14,6 +14,8 @@ async function run() {
       tl.getVariable("build.artifactStagingDirectory"),
       ".codeAnalysis"
     );
+
+    console.log(stagingDir);
 
     const project_directory = tl.getInput("project_directory", false);
     const directory: string = tl.getInput("directory", false);
@@ -29,6 +31,8 @@ async function run() {
         "custom_ruleset"
       );
     }
+
+    console.log(rulesetpath);
 
     const format: string = tl.getInput("format", false);
     const outputPath: string = tl.getInput("outputPath", false);
