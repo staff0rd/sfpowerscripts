@@ -10,6 +10,8 @@ import { AppInsights } from "../Common/AppInsights";
 
 async function run() {
   try {
+    console.log("Test.. PMD");
+
     let stagingDir: string = path.join(
       tl.getVariable("build.artifactStagingDirectory"),
       ".codeAnalysis"
