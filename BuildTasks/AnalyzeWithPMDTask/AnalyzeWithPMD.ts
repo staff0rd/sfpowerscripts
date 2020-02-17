@@ -12,29 +12,19 @@ async function run() {
   try {
     console.log("Test.. PMD");
 
-
-    
     let taskType = tl.getVariable("Release.ReleaseId") ? "Release" : "Build";
-    let stagingDir:string='';
-    if(taskType=='Build')
-    {
-     stagingDir = path.join(
-      tl.getVariable("build.artifactStagingDirectory"),
-      ".codeAnalysis"
-    );
-
-    console.log(stagingDir);
-    }
-    else
-    {
-
-      let stagingDir = path.join(
+    let stagingDir: string = "";
+    if (taskType == "Build") {
+      stagingDir = path.join(
+        tl.getVariable("build.artifactStagingDirectory"),
         ".codeAnalysis"
       );
+
+      console.log(stagingDir);
+    } else {
+      stagingDir = path.join(".codeAnalysis");
       console.log(stagingDir);
     }
-
-   
 
     const project_directory = tl.getInput("project_directory", false);
     const directory: string = tl.getInput("directory", false);
@@ -42,7 +32,7 @@ async function run() {
 
     AppInsights.setupAppInsights(tl.getBoolInput("isTelemetryEnabled", true));
 
-    let rulesetpath: string="";
+    let rulesetpath: string = "";
     if (ruleset == "Custom" && isNullOrUndefined(rulesetpath)) {
       rulesetpath = tl.getInput("rulesetpath", false);
       AppInsights.trackTaskEvent(
@@ -59,7 +49,7 @@ async function run() {
 
     const isToBreakBuild = tl.getBoolInput("isToBreakBuild", false);
 
-    let result: [number, number, number]=[0,0,0];
+    let result: [number, number, number] = [0, 0, 0];
 
     let pmdImpl: AnalyzeWithPMDImpl = new AnalyzeWithPMDImpl(
       project_directory,
@@ -72,65 +62,67 @@ async function run() {
     let command = await pmdImpl.buildExecCommand();
     await pmdImpl.exec(command);
 
-    let artifactFilePath = path.join(
-      os.homedir(),
-      "sfpowerkit",
-      "pmd",
-      `pmd-bin-${version}`,
-      "sf-pmd-output.xml"
-    );
-
-    tl.debug(`Artifact File Path : ${artifactFilePath}`);
-
-    if (fs.existsSync(artifactFilePath)) {
-      result = parseXmlReport(artifactFilePath);
-    }
-
-    if (result != null) {
-      let summary = createSummaryLine(result);
-      let buildSummaryFilePath: string = path.join(
-        stagingDir,
-        "CodeAnalysisBuildSummary.md"
-      );
-      FileSystemInteractions.createDirectory(stagingDir);
-      fs.writeFileSync(buildSummaryFilePath, summary);
-
-      tl.command(
-        "task.addattachment",
-        {
-          type: "Distributedtask.Core.Summary",
-          name: "Static Analysis with PMD"
-        },
-        buildSummaryFilePath
+    if (taskType == "Build") {
+      let artifactFilePath = path.join(
+        os.homedir(),
+        "sfpowerkit",
+        "pmd",
+        `pmd-bin-${version}`,
+        "sf-pmd-output.xml"
       );
 
-      tl.command(
-        "artifact.upload",
-        { artifactname: `Code Analysis Results` },
-        artifactFilePath
-      );
+      tl.debug(`Artifact File Path : ${artifactFilePath}`);
 
-      //add attachement
-      tl.command(
-        "task.addattachment",
-        {
-          type: `pmd_analysis_results`,
-          name: `sfpowerscripts_pmd_analysis_results`
-        },
-        artifactFilePath
-      );
+      if (fs.existsSync(artifactFilePath)) {
+        result = parseXmlReport(artifactFilePath);
+      }
 
-      if (isToBreakBuild && result[2] > 0)
-        tl.setResult(
-          tl.TaskResult.Failed,
-          `Build Failed due to ${result[2]} critical defects found`
+      if (result != null) {
+        let summary = createSummaryLine(result);
+        let buildSummaryFilePath: string = path.join(
+          stagingDir,
+          "CodeAnalysisBuildSummary.md"
+        );
+        FileSystemInteractions.createDirectory(stagingDir);
+        fs.writeFileSync(buildSummaryFilePath, summary);
+
+        tl.command(
+          "task.addattachment",
+          {
+            type: "Distributedtask.Core.Summary",
+            name: "Static Analysis with PMD"
+          },
+          buildSummaryFilePath
         );
 
-      AppInsights.trackTask("sfpwowerscripts-analyzewithpmd-task");
-      AppInsights.trackTaskEvent(
-        "sfpwowerscripts-analyzewithpmd-task",
-        "artifact_uploaded"
-      );
+        tl.command(
+          "artifact.upload",
+          { artifactname: `Code Analysis Results` },
+          artifactFilePath
+        );
+
+        //add attachement
+        tl.command(
+          "task.addattachment",
+          {
+            type: `pmd_analysis_results`,
+            name: `sfpowerscripts_pmd_analysis_results`
+          },
+          artifactFilePath
+        );
+
+        if (isToBreakBuild && result[2] > 0)
+          tl.setResult(
+            tl.TaskResult.Failed,
+            `Build Failed due to ${result[2]} critical defects found`
+          );
+
+        AppInsights.trackTask("sfpwowerscripts-analyzewithpmd-task");
+        AppInsights.trackTaskEvent(
+          "sfpwowerscripts-analyzewithpmd-task",
+          "artifact_uploaded"
+        );
+      }
     }
   } catch (err) {
     tl.setResult(tl.TaskResult.Failed, err.message);
@@ -169,8 +161,6 @@ function parseXmlReport(xmlReport: string): [number, number, number] {
         }
       });
     }
-
-
   });
 
   return [violationCount, fileCount, criticaldefects];
