@@ -45,7 +45,7 @@ async function run() {
       devhub_alias,
       wait_time,
       isCoverageEnabled,
-      isValidationToBeSkipped
+      isSkipValidation
     );
 
     let command: string = await createUnlockedPackageImpl.buildExecCommand();

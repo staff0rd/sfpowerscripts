@@ -14,7 +14,7 @@ export default class CreateUnlockedPackageImpl {
     private devhub_alias: string,
     private wait_time: string,
     private isCoverageEnabled: boolean,
-    private isValidationToBeSkipped: boolean
+    private isSkipValidation: boolean
   ) {}
 
   public async exec(command: string): Promise<string> {
@@ -57,7 +57,7 @@ export default class CreateUnlockedPackageImpl {
 
     if (this.isCoverageEnabled) command += ` -c`;
 
-    if (this.isValidationToBeSkipped) command += ` --skipvalidation`;
+    if (this.isSkipValidation) command += ` --skipvalidation`;
 
     command += ` -v ${this.devhub_alias}`;
 
