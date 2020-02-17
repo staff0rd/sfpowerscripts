@@ -16,6 +16,7 @@ async function run() {
     let config_file_path = tl.getInput("config_file_path", true);
     let installationkeybypass = tl.getBoolInput("installationkeybypass", true);
     let isCoverageEnabled:boolean = tl.getBoolInput("enable_coverage",true);
+    let isSkipValidation:boolean = tl.getBoolInput("isValidationToBeSkipped",true);
 
     let installationkey;
 
@@ -43,7 +44,8 @@ async function run() {
       project_directory,
       devhub_alias,
       wait_time,
-      isCoverageEnabled
+      isCoverageEnabled,
+      isValidationToBeSkipped
     );
 
     let command: string = await createUnlockedPackageImpl.buildExecCommand();

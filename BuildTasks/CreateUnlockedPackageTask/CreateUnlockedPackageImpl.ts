@@ -13,50 +13,53 @@ export default class CreateUnlockedPackageImpl {
     private project_directory: string,
     private devhub_alias: string,
     private wait_time: string,
-    private isCoverageEnabled:boolean
+    private isCoverageEnabled: boolean,
+    private isValidationToBeSkipped: boolean
   ) {}
 
   public async exec(command: string): Promise<string> {
+    let child = child_process.exec(
+      command,
+      { cwd: this.project_directory, encoding: "utf8" },
+      (error, stdout, stderr) => {
+        if (error)
+          child.stderr.on("data", data => {
+            console.log(data.toString());
+            output += data.toString();
+          });
+        throw error;
+      }
+    );
 
-    let child=child_process.exec(command,  {cwd:this.project_directory, encoding: "utf8" },(error,stdout,stderr)=>{
-
-      if(error)
-         throw error;
+    let output = "";
+    child.stdout.on("data", data => {
+      console.log(data.toString());
+      output += data.toString();
     });
-   
-  
-    let output="";
-    child.stdout.on("data",data=>{console.log(  data.toString()); 
-      output+=data.toString();
-    });
 
-   
     await onExit(child);
 
     let result = JSON.parse(output);
 
     return result.result.SubscriberPackageVersionId;
-
   }
 
   public async buildExecCommand(): Promise<string> {
-    let command = `npx sfdx force:package:version:create -p ${this.sfdx_package}  -w ${this.wait_time} --definitionfile ${this.config_file_path} --json`
+    let command = `npx sfdx force:package:version:create -p ${this.sfdx_package}  -w ${this.wait_time} --definitionfile ${this.config_file_path} --json`;
 
-    if(!isNullOrUndefined(this.version_number))
-    command+=`  --versionnumber ${this.version_number }`;
+    if (!isNullOrUndefined(this.version_number))
+      command += `  --versionnumber ${this.version_number}`;
 
-    if(this.installationkeybypass)
-     command+=` -x`
-    else
-     command+=` -k ${this.installationkey}`
-    
-    if(isNullOrUndefined(this.tag))
-    command+=` -t ${this.tag}`
- 
-    if(this.isCoverageEnabled)
-    command+=` -c`
+    if (this.installationkeybypass) command += ` -x`;
+    else command += ` -k ${this.installationkey}`;
 
-    command+=` -v ${this.devhub_alias}`
+    if (isNullOrUndefined(this.tag)) command += ` -t ${this.tag}`;
+
+    if (this.isCoverageEnabled) command += ` -c`;
+
+    if (this.isValidationToBeSkipped) command += ` --skipvalidation`;
+
+    command += ` -v ${this.devhub_alias}`;
 
     return command;
   }
