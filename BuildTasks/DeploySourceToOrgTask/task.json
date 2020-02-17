@@ -7,7 +7,7 @@
     "category": "Build",
     "author": "azlam.abdulsalam",
     "version": {
-        "Major": 3,
+        "Major": 4,
         "Minor": 0,
         "Patch": 1
     },
@@ -27,7 +27,7 @@
         {
             "name": "project_directory",
             "type": "string",
-            "label": "SFDX Project Directory that needs to be deployed",
+            "label": "Project Directory",
             "defaultValue": "",
             "required": false,
             "helpMarkDown": "The  directory should contain a sfdx-project.json for this command to succeed"
@@ -35,10 +35,10 @@
         {
             "name": "source_directory",
             "type": "string",
-            "label": "Source Directory to be deployed",
+            "label": "Package Directory to be deployed",
             "defaultValue": "force-app",
             "required": true,
-            "helpMarkDown": "wait time for command to finish in minutes"
+            "helpMarkDown": "The particular package directory in the project that needs to be deployed"
         },
         {
             "name": "checkonly",
