@@ -29,7 +29,7 @@ async function run() {
 
 
     if (tl.getVariable("Agent.OS") == "Windows_NT") {
-      let output = child_process.execSync(`npm install -g sfdx-cli@${cli_version}`,{ encoding: "utf8" });
+      let output = child_process.execSync(`npx npm install -g sfdx-cli@${cli_version}`,{ encoding: "utf8" });
       console.log(output);
       sfdx_homedirectory=process.env.LOCALAPPDATA;
       whitelistpath = path.join(sfdx_homedirectory, "sfdx");
