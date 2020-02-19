@@ -3,7 +3,6 @@ import path = require("path");
 import fs = require("fs-extra");
 
 async function run() {
-
   let taskType = tl.getVariable("Release.ReleaseId") ? "Release" : "Build";
   let stagingDir: string = "";
   if (taskType == "Build") {
@@ -14,7 +13,7 @@ async function run() {
 
     console.log(stagingDir);
   } else {
-    stagingDir = path.join(".testresults");
+    stagingDir = path.join( tl.getVariable("agent.releaseDirectory"),".testresults");
     console.log(stagingDir);
   }
 
@@ -22,33 +21,41 @@ async function run() {
 }
 
 function publishTestResults(resultsDir: string): void {
-
   //Check if these files have been already read for publishing using a file as a flag
   const duplicateCheckFile = path.join(resultsDir, ".duplicateFile");
 
   if (!fs.existsSync(duplicateCheckFile)) {
-
     //Check if any files exist in the staging directory
     const matchingTestResultsFiles: string[] = tl.findMatch(
       resultsDir,
       "*-junit.xml"
     );
 
-    
-
     if (matchingTestResultsFiles && matchingTestResultsFiles.length > 0) {
+      let taskType = tl.getVariable("Release.ReleaseId") ? "Release" : "Build";
+      if (taskType == "Build") {
+        tl.command(
+          "artifact.upload",
+          { artifactname: `Apex Test Results` },
+          resultsDir
+        );
+      }
+
+      let buildConfig="";
+      let buildPlaform="";
+
+      if(taskType == "Build")
+      {
+       buildConfig = tl.getVariable("BuildConfiguration");
+       buildPlaform = tl.getVariable("BuildPlatform");
+      }
+      else
+      {
+        buildConfig = tl.getVariable("Release.DefinitionName");
+        buildPlaform = tl.getVariable("Release.DefinitionEnvironmentId");
+      }
 
 
-      tl.command(
-        "artifact.upload",
-        { artifactname: `Apex Test Results` },
-        resultsDir
-      );
-
-
-
-      const buildConfig = tl.getVariable("BuildConfiguration");
-      const buildPlaform = tl.getVariable("BuildPlatform");
       const testRunTitle = "Apex Test Run";
 
       const tp: tl.TestPublisher = new tl.TestPublisher("JUnit");
