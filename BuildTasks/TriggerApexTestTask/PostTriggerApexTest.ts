@@ -3,10 +3,21 @@ import path = require("path");
 import fs = require("fs-extra");
 
 async function run() {
-  let stagingDir: string = path.join(
-    tl.getVariable("build.artifactStagingDirectory"),
-    ".testresults"
-  );
+
+  let taskType = tl.getVariable("Release.ReleaseId") ? "Release" : "Build";
+  let stagingDir: string = "";
+  if (taskType == "Build") {
+    stagingDir = path.join(
+      tl.getVariable("build.artifactStagingDirectory"),
+      ".testresults"
+    );
+
+    console.log(stagingDir);
+  } else {
+    stagingDir = path.join(".testresults");
+    console.log(stagingDir);
+  }
+
   publishTestResults(stagingDir);
 }
 

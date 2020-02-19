@@ -7,9 +7,9 @@
     "category": "Build",
     "author": "azlam.abdulsalam",
     "version": {
-        "Major": 4,
+        "Major": 5,
         "Minor": 0,
-        "Patch": 1
+        "Patch": 0
     },
     "runsOn": [
         "Agent"
@@ -98,6 +98,14 @@
             "required": true,
             "visibleRule": "testlevel = RunApexTestSuite"
         },
+        {
+            "name": "isToBreakBuildIfEmpty",
+            "type": "boolean",
+            "label": "Break Build if the provided metadata folder is empty",
+            "defaultValue": true,
+            "required": true,
+            "helpMarkDown": "Uncheck this field, to allow for empty folders not to break build, useful in the case of pre/post step uniformity across projects"
+        }
         {
             "name": "isTelemetryEnabled",
             "type": "boolean",
