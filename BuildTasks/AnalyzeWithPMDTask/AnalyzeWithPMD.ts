@@ -35,16 +35,17 @@ async function run() {
 
     AppInsights.setupAppInsights(tl.getBoolInput("isTelemetryEnabled", true));
 
-    let rulesetpath: string = "";
+    let rulesetpath: string;
     if (ruleset == "Custom" && isNullOrUndefined(rulesetpath)) {
       rulesetpath = tl.getInput("rulesetpath", false);
       AppInsights.trackTaskEvent(
         "sfpwowerscripts-analyzewithpmd-task",
         "custom_ruleset"
       );
+      console.log(rulesetpath);
     }
 
-    console.log(rulesetpath);
+   
 
     const format: string = tl.getInput("format", false);
     const outputPath: string = tl.getInput("outputPath", false);
