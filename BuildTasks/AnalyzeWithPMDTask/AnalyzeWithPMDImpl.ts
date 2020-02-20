@@ -47,6 +47,7 @@ export default class AnalyzeWithPMDImpl {
     command+=` --version=${this.version}`;
 
 
+    console.log(command);
     return command;
   }
 

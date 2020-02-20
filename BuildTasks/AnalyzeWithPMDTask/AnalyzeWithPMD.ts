@@ -14,16 +14,19 @@ async function run() {
 
     let taskType = tl.getVariable("Release.ReleaseId") ? "Release" : "Build";
     let stagingDir: string = "";
+
     if (taskType == "Build") {
       stagingDir = path.join(
         tl.getVariable("build.artifactStagingDirectory"),
         ".codeAnalysis"
       );
 
-      console.log(stagingDir);
+      tl.debug("Build Staging Dir")
+      tl.debug(stagingDir);
     } else {
       stagingDir = path.join(".codeAnalysis");
-      console.log(stagingDir);
+      tl.debug("Release Staging Dir")
+      tl.debug(stagingDir);
     }
 
     const project_directory = tl.getInput("project_directory", false);
