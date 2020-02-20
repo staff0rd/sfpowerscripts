@@ -3,7 +3,7 @@
     "id": "sfpowerscripts-dev",
     "publisher": "AzlamSalam",
     "name": "sfpowerscripts (dev)",
-    "version": "10.0.25",
+    "version": "10.0.26",
     "description": "Azure Pipelines tasks for working with Salesforce",
     "tags": [
         "Extension",
