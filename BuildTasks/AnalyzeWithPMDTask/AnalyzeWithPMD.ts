@@ -35,9 +35,10 @@ async function run() {
 
     AppInsights.setupAppInsights(tl.getBoolInput("isTelemetryEnabled", true));
 
-    let rulesetpath: string;
-    if (ruleset == "Custom" && isNullOrUndefined(rulesetpath)) {
-      rulesetpath = tl.getInput("rulesetpath", false);
+
+    let rulesetpath=""
+    if (ruleset == "Custom") {
+      let rulesetpath = tl.getInput("rulesetpath", false);
       AppInsights.trackTaskEvent(
         "sfpwowerscripts-analyzewithpmd-task",
         "custom_ruleset"

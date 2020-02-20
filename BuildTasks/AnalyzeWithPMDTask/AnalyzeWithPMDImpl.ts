@@ -40,12 +40,13 @@ export default class AnalyzeWithPMDImpl {
     if(!isNullOrUndefined(this.ouputPath))
     command+=` -o  ${this.ouputPath}`;
 
-    if(!isNullOrUndefined(this.ruleset))
+    if(!isNullOrUndefined(this.ruleset) && this.ruleset.length>0)
     command+=` -r  ${this.ruleset}`;
 
     if(!isNullOrUndefined(this.version))
     command+=` --version=${this.version}`;
 
+    command+=` --loglevel INFO`
 
     console.log(command);
     return command;
