@@ -24,6 +24,7 @@ variables:
 
 stages:
 - stage: Review
+  condition: and('true', eq(variables['build.Reason'], 'PullRequest'))
   jobs:
   - template: templates/buildplugins.yml  #Build Template
     parameters:
