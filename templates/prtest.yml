@@ -13,7 +13,7 @@ parameters:
 
 jobs:
     - job: ${{ parameters.name }}
-      displayName: 'Test PR tasks on ${{ parameters.image }}'
+      displayName: 'Test PR Pipleine  on ${{ parameters.image }}'
       pool:
         vmImage: '${{ parameters.image }}'
       dependsOn: ${{ parameters.dependOnJob }}
@@ -31,12 +31,14 @@ jobs:
             isTelemetryEnabled: true
         
         - task: sfpwowerscripts-analyzewithpmd-task@4
+          displayName: Analyze Code with PMD
           inputs:
             directory: 'force-app'
             version: '6.21.0'
             isTelemetryEnabled: true
  
         - task: sfpwowerscript-authenticateorg-task@7
+          displayName: Authenticate DevHub
           inputs:
             method: 'ServiceConnection'
             salesforce_connection: 'Devhub_azlam_salam'
@@ -44,6 +46,7 @@ jobs:
             isTelemetryEnabled: true
          
         - task: sfpwowerscript-managescratchorg-task@5
+          displayName: Create Scratch Org
           inputs:
            action: 'Create'
            config_file_path: 'config/project-scratch-def.json'
@@ -54,6 +57,7 @@ jobs:
        
          
         - task: sfpowerscript-deploysourcetoorg-task@5
+          displayName: Deploy to  Scratch Org
           inputs:
             target_org: 'scratchorg'
             source_directory: 'force-app'
@@ -65,6 +69,7 @@ jobs:
  
         
         - task: sfpwowerscript-triggerapextest-task@3
+          displayName: Trigger Apex Test Task
           inputs:
            target_org: 'scratchorg'
            testlevel: 'RunLocalTests'
@@ -72,6 +77,7 @@ jobs:
            isTelemetryEnabled: true
    
         - task: sfpwowerscript-validateapextestcoverage-task@2
+          displayName: Validate Apex Test Coverage
           inputs:
               target_org: 'scratchorg'
               test_coverage: '75'

@@ -28,7 +28,7 @@ parameters:
 
 jobs:
   - deployment: ${{ parameters.name }}
-    displayName: 'Build and Deploy'
+    displayName: 'Build and Deploy to ${{ parameters.environmentToDeploy }}'
     timeoutInMinutes: 10
     pool:
       vmImage: 'vs2017-win2016'

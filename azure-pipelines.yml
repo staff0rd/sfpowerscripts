@@ -1,4 +1,4 @@
-name: $(Rev:.r)
+name: Milestone10-$(Rev:.r)
 
 resources:
   repositories:
@@ -72,6 +72,37 @@ stages:
       name: 'TestPrOnWindows'
       image: 'vs2017-win2016'
       dependOnJob: 'WaitPluginToInstallonDevelopment'
+
+- stage: Beta
+  condition: and('true', eq(variables['build.sourceBranch'], 'refs/heads/develop'))
+  dependsOn: Develop
   
+  jobs:
+   - template: templates/buildplugins.yml   #Build Template
+     parameters:
+      name: 'DeployToBeta'
+      commitToGit: false
+      branchToDeploy: 'develop'
+      stageToDeploy: 'beta'
+      version: 'beta'
+      environmentToDeploy: 'beta'
+      toBuild: true
+
+
+- stage: Production
+  condition: and('true', eq(variables['build.sourceBranch'], 'refs/heads/master'))
+  dependsOn: Beta
+  
+  jobs:
+   - template: templates/buildplugins.yml   #Build Template
+     parameters:
+      name: 'DeployToProd'
+      commitToGit: true
+      branchToDeploy: 'master'
+      stageToDeploy: 'prod'
+      version: 'beta'
+      environmentToDeploy: 'beta'
+      toBuild: true
+
   
   
