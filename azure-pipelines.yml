@@ -74,6 +74,8 @@ stages:
       name: 'TestPrOnWindows'
       image: 'vs2017-win2016'
       dependOnJob: 'WaitPluginToInstallonDevelopment'
+      repositoryToCheckout: 'forcedi'
+      directory: 'force-di'
 
 - stage: Beta
   condition: and(succeeded(), eq(variables['build.sourceBranch'], 'refs/heads/develop'))
