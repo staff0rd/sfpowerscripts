@@ -90,7 +90,6 @@ stages:
 
 
 - stage: Production
-  condition: and('true', eq(variables['build.sourceBranch'], 'refs/heads/master'))
   dependsOn: Beta
   
   jobs:
