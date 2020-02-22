@@ -1,0 +1,79 @@
+parameters:
+   - name: name
+     default: 'TestPrOnLinux'
+    
+   - name: image
+     type: string
+     default: 'ubuntu-latest'
+
+   - name: dependOnJob
+     type: string
+     default: 'WaitPluginToInstallonDevelopment'
+
+
+jobs:
+    - job: ${{ parameters.name }}
+      displayName: 'Test PR tasks on ${{ parameters.image }}'
+      pool:
+        vmImage: '${{ parameters.image }}'
+      dependsOn: ${{ parameters.dependOnJob }}
+      steps:
+ 
+        - checkout: dreamhouse
+ 
+        - task: sfpwowerscript-installsfdx-task@5
+          displayName: Install SFDX
+    
+        - task: sfpwowerscript-validatedxunlockedpackage-task@2
+          displayName: Validates Package for MetadataCoverage
+          inputs:
+            package: 'force-app'
+            isTelemetryEnabled: true
+        
+        - task: sfpwowerscripts-analyzewithpmd-task@4
+          inputs:
+            directory: 'force-app'
+            version: '6.21.0'
+            isTelemetryEnabled: true
+ 
+        - task: sfpwowerscript-authenticateorg-task@7
+          inputs:
+            method: 'ServiceConnection'
+            salesforce_connection: 'Devhub_azlam_salam'
+            alias: 'HubOrg'
+            isTelemetryEnabled: true
+         
+        - task: sfpwowerscript-managescratchorg-task@5
+          inputs:
+           action: 'Create'
+           config_file_path: 'config/project-scratch-def.json'
+           alias: 'scratchorg'
+           devhub_alias: 'HubOrg'
+           maintainorg: 'delete'
+           isTelemetryEnabled: true
+       
+         
+        - task: sfpowerscript-deploysourcetoorg-task@5
+          inputs:
+            target_org: 'scratchorg'
+            source_directory: 'force-app'
+            checkonly: true
+            wait_time: '20'
+            testlevel: 'NoTestRun'
+            isToBreakBuildIfEmpty: true
+            isTelemetryEnabled: true
+ 
+        
+        - task: sfpwowerscript-triggerapextest-task@3
+          inputs:
+           target_org: 'scratchorg'
+           testlevel: 'RunLocalTests'
+           wait_time: '60'
+           isTelemetryEnabled: true
+   
+        - task: sfpwowerscript-validateapextestcoverage-task@2
+          inputs:
+              target_org: 'scratchorg'
+              test_coverage: '75'
+              isTelemetryEnabled: true
+ 

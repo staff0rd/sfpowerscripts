@@ -1,0 +1,76 @@
+name: $(Rev:.r)
+
+resources:
+  repositories:
+  - repository: dreamhouse # The name used to reference this repository in the checkout step
+    type: github
+    endpoint: azlamsalamgit
+    name: azlamsalam/dreamhouse-sfdx
+
+
+trigger:
+ - develop
+ - master
+
+pr:
+  branches:
+    include:
+    - develop
+    - master
+
+variables:
+- group: Tokens
+
+
+stages:
+- stage: Review
+  jobs:
+  - template: templates/buildplugins.yml  #Build Template
+    parameters:
+      name: 'DeployToReview'
+      commitToGit: false
+      stageToDeploy: 'review'
+      version: 'auto'
+      environmentToDeploy: 'review'
+      toBuild: true
+          
+       
+- stage: Develop
+  condition: and('true', eq(variables['build.sourceBranch'], 'refs/heads/develop'))
+  
+  jobs:
+   - template: templates/buildplugins.yml   #Build Template
+     parameters:
+      name: 'DeployToDevelop'
+      commitToGit: true
+      branchToDeploy: 'develop'
+      stageToDeploy: 'dev'
+      version: 'dev'
+      environmentToDeploy: 'development'
+      toBuild: true
+      
+
+   - job: WaitPluginToInstallonDevelopment
+     displayName: 'Wait for  Plugin To Install on Development'
+     dependsOn: DeployToDevelop
+     pool: server
+     steps:
+      - task: Delay@1
+        inputs:
+         delayForMinutes: '2' 
+
+   - template: templates/prtest.yml   
+     parameters:
+      name: 'TestPrOnLinux'
+      image: 'ubuntu-latest'
+      dependOnJob: 'WaitPluginToInstallonDevelopment'
+
+  
+   - template: templates/prtest.yml   
+     parameters:
+      name: 'TestPrOnWindows'
+      image: 'vs2017-win2016'
+      dependOnJob: 'WaitPluginToInstallonDevelopment'
+  
+  
+  
