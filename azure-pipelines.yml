@@ -2,10 +2,10 @@ name: Milestone10-$(Rev:.r)
 
 resources:
   repositories:
-  - repository: dreamhouse # The name used to reference this repository in the checkout step
+  - repository: forcedi # The name used to reference this repository in the checkout step
     type: github
     endpoint: azlamsalamgit
-    name: azlamsalam/dreamhouse-sfdx
+    name: azlamsalam/force-di
 
 
 trigger:
@@ -65,6 +65,8 @@ stages:
       name: 'TestPrOnLinux'
       image: 'ubuntu-latest'
       dependOnJob: 'WaitPluginToInstallonDevelopment'
+      repositoryToCheckout: 'forcedi'
+      directory: 'force-di'
 
   
    - template: templates/prtest.yml   
@@ -74,7 +76,7 @@ stages:
       dependOnJob: 'WaitPluginToInstallonDevelopment'
 
 - stage: Beta
-  condition: and('true', eq(variables['build.sourceBranch'], 'refs/heads/develop'))
+  condition: and('succeeded(), eq(variables['build.sourceBranch'], 'refs/heads/develop'))
   dependsOn: Develop
   
   jobs:
@@ -91,6 +93,7 @@ stages:
 
 - stage: Production
   dependsOn: Beta
+  condition: and('succeeded(), eq(variables['build.sourceBranch'], 'refs/heads/develop'))
   
   jobs:
    - template: templates/buildplugins.yml   #Build Template
