@@ -75,7 +75,6 @@ jobs:
           inputs:
             target_org: 'scratchorg'
             source_directory:  ${{ parameters.directory }}
-            checkonly: true
             wait_time: '20'
             testlevel: 'NoTestRun'
             checkonly: false
