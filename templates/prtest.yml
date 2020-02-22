@@ -78,6 +78,7 @@ jobs:
             checkonly: true
             wait_time: '20'
             testlevel: 'NoTestRun'
+            checkonly: false
             isToBreakBuildIfEmpty: true
             isTelemetryEnabled: true
  
