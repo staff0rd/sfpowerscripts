@@ -76,7 +76,7 @@ stages:
       dependOnJob: 'WaitPluginToInstallonDevelopment'
 
 - stage: Beta
-  condition: and('succeeded(), eq(variables['build.sourceBranch'], 'refs/heads/develop'))
+  condition: and(succeeded(), eq(variables['build.sourceBranch'], 'refs/heads/develop'))
   dependsOn: Develop
   
   jobs:
@@ -93,7 +93,7 @@ stages:
 
 - stage: Production
   dependsOn: Beta
-  condition: and('succeeded(), eq(variables['build.sourceBranch'], 'refs/heads/develop'))
+  condition: and(succeeded(), eq(variables['build.sourceBranch'], 'refs/heads/develop'))
   
   jobs:
    - template: templates/buildplugins.yml   #Build Template
