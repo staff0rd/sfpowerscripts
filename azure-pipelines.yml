@@ -26,7 +26,7 @@ variables:
 
 stages:
 - stage: Review
-  condition: or(startsWith(variables['build.sourceBranch'], 'refs/heads/feature/'),startsWith(variables['build.sourceBranch'], 'refs/heads/bugfix/') )
+  condition: and( ne(variables['build.Reason'], 'PullRequest')), ne(variables['build.sourceBranch'], 'refs/heads/develop'), ne(variables['build.sourceBranch'], 'refs/heads/master') )
   jobs:
   - template: templates/buildplugins.yml  
     parameters:
