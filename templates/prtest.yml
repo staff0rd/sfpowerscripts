@@ -18,6 +18,10 @@ parameters:
      type: string
      default: 'WaitPluginToInstallonDevelopment'
 
+   - name: service_connection
+     type: string
+     default: ''
+
 
 jobs:
     - job: ${{ parameters.name }}
@@ -49,7 +53,7 @@ jobs:
           displayName: Authenticate DevHub
           inputs:
             method: 'ServiceConnection'
-            salesforce_connection: 'Devhub_azlam_salam'
+            salesforce_connection: '${{ parameters.service_connection }}'
             alias: 'HubOrg'
             isTelemetryEnabled: true
          

@@ -20,6 +20,8 @@ pr:
 
 variables:
 - group: Tokens
+- name: devhub_service_connection
+  value: 'DevHub_azlam_salam'
 
 
 stages:
@@ -67,6 +69,7 @@ stages:
       dependOnJob: 'WaitPluginToInstallonDevelopment'
       repositoryToCheckout: 'forcedi'
       directory: 'force-di'
+      service_connection: $(devhub_service_connection)
 
   
    - template: templates/prtest.yml   
@@ -76,6 +79,7 @@ stages:
       dependOnJob: 'WaitPluginToInstallonDevelopment'
       repositoryToCheckout: 'forcedi'
       directory: 'force-di'
+      service_connection: $(devhub_service_connection)
 
 - stage: Beta
   condition: and(succeeded(), eq(variables['build.sourceBranch'], 'refs/heads/develop'))
@@ -101,11 +105,11 @@ stages:
    - template: templates/buildplugins.yml   #Build Template
      parameters:
       name: 'DeployToProd'
-      commitToGit: true
-      branchToDeploy: 'master'
+      commitToGit: false
+      branchToDeploy: 'develop'
       stageToDeploy: 'prod'
       version: 'beta'
-      environmentToDeploy: 'beta'
+      environmentToDeploy: 'production'
       toBuild: true
 
   
