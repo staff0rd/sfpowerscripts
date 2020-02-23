@@ -96,7 +96,7 @@ jobs:
              inputs:
               command: custom
               verbose: false
-              customCommand: 'run publish --  --version=$(Build.BuildNumber) --token=$(azlamsalam_token) --stage=${{ parameters.stageToDeploy }}'
+              customCommand: 'run publish --  --version=$(Build.BuildNumber) --token=$(azlamsalam_token) --stage=${{ parameters.stageToDeploy }} --organization=${{ parameters.organization }}'
  
            - task: CmdLine@2
              displayName: 'Push to Repo'

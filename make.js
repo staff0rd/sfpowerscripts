@@ -135,7 +135,7 @@ target.publish = function() {
         "/AzlamSalam.sfpowerscripts-dev-" +
         options.version +
         '.vsix"' +
-        "--share-with "+options.organization+" --token " +
+        " --share-with "+options.organization+" --token " +
         options.token
     );
   } 
