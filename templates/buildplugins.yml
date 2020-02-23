@@ -21,6 +21,15 @@ parameters:
   - name: environmentToDeploy
     type: string 
     default: development
+
+  - name: organization
+    type: string 
+    default: ''
+
+
+  - name: buildNumber
+    type: string 
+    default: ''
   
   - name: toBuild
     type: boolean 
@@ -73,7 +82,7 @@ jobs:
              inputs:
               command: custom
               verbose: false
-              customCommand: 'run increment:version -- --version=${{ parameters.version }}  --stage=${{ parameters.stageToDeploy }}'
+              customCommand: 'run increment:version -- --version=${{ parameters.version }}  --stage=${{ parameters.stageToDeploy }} --buildNumber=${{ parameters.buildNumber }}'
           
            - task: Npm@1
              displayName: 'Create package'

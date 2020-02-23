@@ -25,31 +25,33 @@ variables:
 
 
 stages:
-- stage: Review
+- stage: Develop
   condition: and( ne(variables['build.Reason'], 'PullRequest'), ne(variables['build.sourceBranch'], 'refs/heads/develop'), ne(variables['build.sourceBranch'], 'refs/heads/master') )
   jobs:
   - template: templates/buildplugins.yml  
     parameters:
-      name: 'DeployToReview'
+      name: 'DeployToDevelop'
       commitToGit: false
-      stageToDeploy: 'review'
+      stageToDeploy: 'dev'
       version: 'auto'
-      environmentToDeploy: 'review'
+      environmentToDeploy: 'dev'
       toBuild: true
+      organization: safebot
           
        
-- stage: Develop
+- stage: Review
   condition:  eq(variables['build.Reason'], 'PullRequest')
   jobs:
    - template: templates/buildplugins.yml   
      parameters:
-      name: 'DeployToDevelop'
+      name: 'DeployToReview'
       commitToGit: false
-      branchToDeploy: 'develop'
-      stageToDeploy: 'dev'
-      version: 'dev'
+      stageToDeploy: 'review'
+      version: 'review'
+      organization: azlamsalam
       environmentToDeploy: 'development'
       toBuild: true
+      buildNumber: $(Rev:r)
       
 
    - job: WaitPluginToInstallonDevelopment
@@ -105,6 +107,8 @@ stages:
       version: 'beta'
       environmentToDeploy: 'beta'
       toBuild: true
+      organization: dxatscale
+      
 
 
 - stage: Production

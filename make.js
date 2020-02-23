@@ -1,7 +1,7 @@
 // parse command line options
 var minimist = require("minimist");
 var mopts = {
-  string: ["version", "stage", "taskId"],
+  string: ["version", "stage", "taskId","organization","buildNumber"],
   boolean: ["public"]
 };
 
@@ -87,12 +87,12 @@ target.incrementversion = function() {
         ) * 0.5
       );
       options.version = major + "." + minor + "." + patch;
-    } else if (options.version === "dev") {
+    } else if (options.version === "review") {
       //Treat patch as the build number, let major and minor be developer controlled
       var major = semver.major(manifest.version);
       var minor = semver.minor(manifest.version);
       var patch = semver.patch(manifest.version);
-      patch += 1;
+      patch = options.buildNumber;
       options.version = major + "." + minor + "." + patch;
     }
 
@@ -135,7 +135,7 @@ target.publish = function() {
         "/AzlamSalam.sfpowerscripts-dev-" +
         options.version +
         '.vsix"' +
-        " --share-with azlamsalam --token " +
+        "--share-with "+options.organization+" --token " +
         options.token
     );
   } 
@@ -153,7 +153,7 @@ target.publish = function() {
         "/AzlamSalam.sfpowerscripts-beta-" +
         version +
         '.vsix"' +
-        " --share-with dxatscale --token " +
+        "--share-with "+options.organization+" --token " +
         options.token
     );
   } 
@@ -169,7 +169,7 @@ target.publish = function() {
         "/AzlamSalam.sfpowerscripts-review-" +
         options.version +
         '.vsix"' +
-        " --share-with safebot --token " +
+        " --share-with "+options.organization+" --token " +
         options.token
     );
   } else {
@@ -200,12 +200,12 @@ updateExtensionManifest = function(dir, options, isOriginalFile) {
     manifest.id = "sfpowerscripts" + "-" + "dev";
     manifest.name = "sfpowerscripts" + " (" + "dev" + ")";
     manifest.public = false;
+    manifest.baseUri = "https://localhost:3000/build/";
   } else if (options.stage == "review" && !isOriginalFile) {
     manifest.version = options.version;
     manifest.id = "sfpowerscripts" + "-" + "review";
     manifest.name = "sfpowerscripts" + " (" + "review" + ")";
     manifest.public = false;
-    manifest.baseUri = "https://localhost:3000/build/";
   } 
   else if (options.stage == "beta" && !isOriginalFile) {
     manifest.id = "sfpowerscripts" + "-" + "beta";
