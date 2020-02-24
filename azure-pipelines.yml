@@ -54,7 +54,7 @@ stages:
       stageToDeploy: 'review'
       version: 'review'
       organization: azlamsalam
-      environmentToDeploy: 'development'
+      environmentToDeploy: 'review'
       toBuild: true
       buildNumber: $(minor)
       
@@ -88,7 +88,7 @@ stages:
       service_connection: $(devhub_service_connection)
     
    - job: MergeBranchToDevelop
-     displayName: 'Wait for  Plugin To Install on Development'
+     displayName: 'Wait for code to be merged to develop branch'
      dependsOn: 
        - TestPrOnWindows
        - TestPrOnLinux
@@ -130,16 +130,17 @@ stages:
       environmentToDeploy: 'production'
       toBuild: true
    
-   - job: MergeBranchToMaster
-     displayName: 'Merge Develop Branch to Master'
-     dependsOn: 
-       - DeployToProd
-     pool: server
-     steps:
-      - task: ManualIntervention@8
-        inputs:
-          instructions: 'Merge develop branch to master'
-          emailRecipients: 'azlam.salam@outlook.com'
+  #Currently not available
+  #  - job: MergeBranchToMaster
+  #    displayName: 'Merge Develop Branch to Master'
+  #    dependsOn: 
+  #      - DeployToProd
+  #    pool: server
+  #    steps:
+  #     - task: ManualIntervention@8
+  #       inputs:
+  #         instructions: 'Merge develop branch to master'
+  #         emailRecipients: 'azlam.salam@outlook.com'
 
   
   
