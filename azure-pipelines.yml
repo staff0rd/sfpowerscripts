@@ -87,17 +87,18 @@ stages:
       directory: 'force-di'
       service_connection: $(devhub_service_connection)
     
-   - job: MergeBranchToDevelop
-     displayName: 'Wait for code to be merged to develop branch'
-     dependsOn: 
-       - TestPrOnWindows
-       - TestPrOnLinux
-     pool: server
-     steps:
-      - task: ManualIntervention@8
-        inputs:
-          instructions: 'Merge feature/bugfix branch to develop'
-          emailRecipients: 'azlam.salam@outlook.com'
+    #Currently not available
+  #  - job: MergeBranchToDevelop
+  #    displayName: 'Wait for code to be merged to develop branch'
+  #    dependsOn: 
+  #      - TestPrOnWindows
+  #      - TestPrOnLinux
+  #    pool: server
+  #    steps:
+  #     - task: ManualIntervention@8
+  #       inputs:
+  #         instructions: 'Merge feature/bugfix branch to develop'
+  #         emailRecipients: 'azlam.salam@outlook.com'
 
 - stage: Beta
   dependsOn: Review
