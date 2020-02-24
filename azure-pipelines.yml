@@ -1,4 +1,4 @@
-name: Milestone10-$(Rev:.r)
+name: Milestone10$(Rev:.r)
 
 resources:
   repositories:
@@ -7,55 +7,61 @@ resources:
     endpoint: azlamsalamgit
     name: azlamsalam/force-di
 
-
-trigger:
- - develop
- - master
-
 pr:
   branches:
     include:
     - develop
     - master
 
+trigger:
+  - feature/*
+  - hoftix/*
+  - bugfix/*
+
+
 variables:
-- group: Tokens
-- name: devhub_service_connection
-  value: 'DevHub_azlam_salam'
+ - group: Tokens
+ - name: major
+   value: 10
+ - name: minor
+   value: $[counter(variables['major'], 30)]
+ 
 
 
 stages:
-- stage: Review
-  condition: and('true', eq(variables['build.Reason'], 'PullRequest'))
+- stage: Develop
+  condition: and( ne(variables['build.Reason'], 'PullRequest'), ne(variables['build.sourceBranch'], 'refs/heads/develop'), ne(variables['build.sourceBranch'], 'refs/heads/master') )
   jobs:
-  - template: templates/buildplugins.yml  #Build Template
+  - template: templates/buildplugins.yml  
     parameters:
+      name: 'DeployToDevelop'
+      commitToGit: false
+      stageToDeploy: 'dev'
+      version: 'auto'
+      environmentToDeploy: 'dev'
+      toBuild: true
+      organization: safebot
+          
+       
+- stage: Review
+  condition:  eq(variables['build.Reason'], 'PullRequest')
+  dependsOn: []
+  jobs:
+   - template: templates/buildplugins.yml   
+     parameters:
       name: 'DeployToReview'
       commitToGit: false
       stageToDeploy: 'review'
-      version: 'auto'
+      version: 'review'
+      organization: azlamsalam
       environmentToDeploy: 'review'
       toBuild: true
-          
-       
-- stage: Develop
-  condition: and('true', eq(variables['build.sourceBranch'], 'refs/heads/develop'))
-  
-  jobs:
-   - template: templates/buildplugins.yml   #Build Template
-     parameters:
-      name: 'DeployToDevelop'
-      commitToGit: true
-      branchToDeploy: 'develop'
-      stageToDeploy: 'dev'
-      version: 'dev'
-      environmentToDeploy: 'development'
-      toBuild: true
+      buildNumber: $(minor)
       
 
-   - job: WaitPluginToInstallonDevelopment
-     displayName: 'Wait for  Plugin To Install on Development'
-     dependsOn: DeployToDevelop
+   - job: WaitPluginToInstallonReview
+     displayName: 'Wait for  Plugin To Install on Review'
+     dependsOn: DeployToReview
      pool: server
      steps:
       - task: Delay@1
@@ -66,7 +72,7 @@ stages:
      parameters:
       name: 'TestPrOnLinux'
       image: 'ubuntu-latest'
-      dependOnJob: 'WaitPluginToInstallonDevelopment'
+      dependOnJob: 'WaitPluginToInstallonReview'
       repositoryToCheckout: 'forcedi'
       directory: 'force-di'
       service_connection: $(devhub_service_connection)
@@ -76,15 +82,27 @@ stages:
      parameters:
       name: 'TestPrOnWindows'
       image: 'vs2017-win2016'
-      dependOnJob: 'WaitPluginToInstallonDevelopment'
+      dependOnJob: 'WaitPluginToInstallonReview'
       repositoryToCheckout: 'forcedi'
       directory: 'force-di'
       service_connection: $(devhub_service_connection)
+    
+    #Currently not available
+  #  - job: MergeBranchToDevelop
+  #    displayName: 'Wait for code to be merged to develop branch'
+  #    dependsOn: 
+  #      - TestPrOnWindows
+  #      - TestPrOnLinux
+  #    pool: server
+  #    steps:
+  #     - task: ManualIntervention@8
+  #       inputs:
+  #         instructions: 'Merge feature/bugfix branch to develop'
+  #         emailRecipients: 'azlam.salam@outlook.com'
 
 - stage: Beta
-  condition: and(succeeded(), eq(variables['build.sourceBranch'], 'refs/heads/develop'))
-  dependsOn: Develop
-  
+  dependsOn: Review
+  condition: or(succeeded(), startsWith(variables['build.sourceBranch'], 'refs/heads/hotfix/'))
   jobs:
    - template: templates/buildplugins.yml   #Build Template
      parameters:
@@ -95,12 +113,13 @@ stages:
       version: 'beta'
       environmentToDeploy: 'beta'
       toBuild: true
+      organization: dxatscale
+      
 
 
 - stage: Production
   dependsOn: Beta
-  condition: and(succeeded(), eq(variables['build.sourceBranch'], 'refs/heads/develop'))
-  
+  condition: or(succeeded(), startsWith(variables['build.sourceBranch'], 'refs/heads/hotfix/'))
   jobs:
    - template: templates/buildplugins.yml   #Build Template
      parameters:
@@ -111,6 +130,18 @@ stages:
       version: 'beta'
       environmentToDeploy: 'production'
       toBuild: true
+   
+  #Currently not available
+  #  - job: MergeBranchToMaster
+  #    displayName: 'Merge Develop Branch to Master'
+  #    dependsOn: 
+  #      - DeployToProd
+  #    pool: server
+  #    steps:
+  #     - task: ManualIntervention@8
+  #       inputs:
+  #         instructions: 'Merge develop branch to master'
+  #         emailRecipients: 'azlam.salam@outlook.com'
 
   
   
