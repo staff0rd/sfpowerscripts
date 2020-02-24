@@ -20,8 +20,12 @@ trigger:
 
 
 variables:
-- group: Tokens
-
+ - group: Tokens
+ - name: major
+   value: 10
+ - name: minor
+   value: $[counter(variables['major'], 30)]
+ 
 
 
 stages:
@@ -41,6 +45,7 @@ stages:
        
 - stage: Review
   condition:  eq(variables['build.Reason'], 'PullRequest')
+  dependsOn: []
   jobs:
    - template: templates/buildplugins.yml   
      parameters:
@@ -51,7 +56,7 @@ stages:
       organization: azlamsalam
       environmentToDeploy: 'development'
       toBuild: true
-      buildNumber: $(Rev:r)
+      buildNumber: $(minor)
       
 
    - job: WaitPluginToInstallonReview
