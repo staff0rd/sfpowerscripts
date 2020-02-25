@@ -44,7 +44,7 @@ stages:
           
        
 - stage: Review
-  condition:  eq(variables['build.Reason'], 'PullRequest')
+  condition:  or ( eq(variables['build.Reason'], 'Schedule'), eq(variables['build.Reason'], 'Manual'), eq(variables['build.Reason'], 'PullRequest')))
   dependsOn: []
   jobs:
    - template: templates/buildplugins.yml   
