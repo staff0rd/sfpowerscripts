@@ -101,8 +101,8 @@ stages:
   #         emailRecipients: 'azlam.salam@outlook.com'
 
 - stage: Beta
-  dependsOn: Review
-  condition: or(succeeded(),eq(variables['build.Reason'], 'Schedule'), eq(variables['build.Reason'], 'Manual'), startsWith(variables['build.sourceBranch'], 'refs/heads/hotfix/'))
+  dependsOn: []
+  condition: or(succeeded(),eq(variables['build.sourceBranch'], 'refs/heads/develop'), eq(variables['build.Reason'], 'Schedule'), eq(variables['build.Reason'], 'Manual'))
   jobs:
    - template: templates/buildplugins.yml   #Build Template
      parameters:
@@ -120,7 +120,7 @@ stages:
 
 - stage: Production
   dependsOn: Beta
-  condition: or(succeeded(), eq(variables['build.Reason'], 'Schedule'), eq(variables['build.Reason'], 'Manual'), startsWith(variables['build.sourceBranch'], 'refs/heads/hotfix/'))
+  condition: or(succeeded(), eq(variables['build.sourceBranch'], 'refs/heads/develop'), eq(variables['build.Reason'], 'Schedule'), eq(variables['build.Reason'], 'Manual'))
   jobs:
    - template: templates/buildplugins.yml   #Build Template
      parameters:
