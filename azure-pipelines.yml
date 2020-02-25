@@ -44,7 +44,7 @@ stages:
           
        
 - stage: Review
-  condition:  eq(variables['build.Reason'], 'PullRequest')
+  condition:  or ( eq(variables['build.Reason'], 'Schedule'), eq(variables['build.Reason'], 'Manual'), eq(variables['build.Reason'], 'PullRequest'))
   dependsOn: []
   jobs:
    - template: templates/buildplugins.yml   
@@ -101,8 +101,8 @@ stages:
   #         emailRecipients: 'azlam.salam@outlook.com'
 
 - stage: Beta
-  dependsOn: Review
-  condition: or(succeeded(), startsWith(variables['build.sourceBranch'], 'refs/heads/hotfix/'))
+  dependsOn: []
+  condition: or(eq(variables['build.sourceBranch'], 'refs/heads/develop'), eq(variables['build.Reason'], 'Schedule'), eq(variables['build.Reason'], 'Manual'))
   jobs:
    - template: templates/buildplugins.yml   #Build Template
      parameters:
@@ -114,12 +114,13 @@ stages:
       environmentToDeploy: 'beta'
       toBuild: true
       organization: dxatscale
+      buildNumber: $(minor)
       
 
 
 - stage: Production
   dependsOn: Beta
-  condition: or(succeeded(), startsWith(variables['build.sourceBranch'], 'refs/heads/hotfix/'))
+  condition: or(eq(variables['build.sourceBranch'], 'refs/heads/develop'), eq(variables['build.Reason'], 'Schedule'), eq(variables['build.Reason'], 'Manual'))
   jobs:
    - template: templates/buildplugins.yml   #Build Template
      parameters:
@@ -130,6 +131,8 @@ stages:
       version: 'beta'
       environmentToDeploy: 'production'
       toBuild: true
+      buildNumber: $(minor)
+
    
   #Currently not available
   #  - job: MergeBranchToMaster
