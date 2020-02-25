@@ -132,6 +132,7 @@ stages:
       environmentToDeploy: 'production'
       toBuild: true
       buildNumber: $(minor)
+
    
   #Currently not available
   #  - job: MergeBranchToMaster

@@ -95,6 +95,13 @@ target.incrementversion = function() {
       patch = options.buildNumber;
       options.version = major + "." + minor + "." + patch;
     }
+    else if (options.version === "beta" || options.version === "prod") {
+      var major = semver.major(manifest.version);
+      var minor = semver.minor(manifest.version);
+      var patch = semver.patch(manifest.version);
+      patch = options.buildNumber
+      options.version = major + "." + minor + "." + patch;
+    }
 
     if (!semver.valid(options.version)) {
       console.error("package", "Invalid semver version: " + options.version);
