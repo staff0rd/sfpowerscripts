@@ -107,7 +107,7 @@ stages:
    - template: templates/buildplugins.yml   #Build Template
      parameters:
       name: 'DeployToBeta'
-      commitToGit: false
+      commitToGit: true
       branchToDeploy: 'develop'
       stageToDeploy: 'beta'
       version: 'beta'
