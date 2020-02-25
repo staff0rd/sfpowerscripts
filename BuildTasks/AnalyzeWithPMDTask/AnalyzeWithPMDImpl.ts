@@ -10,7 +10,7 @@ export default class AnalyzeWithPMDImpl {
 
   public async exec(command: string): Promise<void> {
    
-    let child=child_process.exec(command,  { encoding: "utf8", cwd:this.project_directory },(error,stdout,stderr)=>{
+    let child=child_process.exec(command,  { encoding: "utf8",maxBuffer: 1024 * 1024*5, cwd:this.project_directory },(error,stdout,stderr)=>{
 
       if(error)
          throw error;
