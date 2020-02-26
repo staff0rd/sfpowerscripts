@@ -102,7 +102,7 @@ stages:
 
 - stage: Beta
   dependsOn: []
-  condition: or(eq(variables['build.sourceBranch'], 'refs/heads/develop'), eq(variables['build.Reason'], 'Schedule'), eq(variables['build.Reason'], 'Manual'))
+  condition: and(eq(variables['build.sourceBranch'], 'refs/heads/develop'), neq(variables['build.Reason'], 'PullRequest') )
   jobs:
    - template: templates/buildplugins.yml   #Build Template
      parameters:
