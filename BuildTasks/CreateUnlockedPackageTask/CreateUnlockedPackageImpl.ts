@@ -53,7 +53,7 @@ export default class CreateUnlockedPackageImpl {
     if (this.installationkeybypass) command += ` -x`;
     else command += ` -k ${this.installationkey}`;
 
-    if (isNullOrUndefined(this.tag)) command += ` -t ${this.tag}`;
+    if (!isNullOrUndefined(this.tag)) command += ` -t ${this.tag}`;
 
     if (this.isCoverageEnabled) command += ` -c`;
 
