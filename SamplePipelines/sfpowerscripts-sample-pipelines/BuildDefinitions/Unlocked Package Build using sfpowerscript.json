@@ -127,7 +127,7 @@
             "condition": "succeeded()",
             "task": {
               "id": "a81064ca-c1cc-4ebf-892f-6299fa36b151",
-              "versionSpec": "5.*",
+              "versionSpec": "6.*",
               "definitionType": "task"
             },
             "inputs": {
@@ -137,6 +137,7 @@
               "config_file_path": "config/project-scratch-def.json",
               "installationkeybypass": "true",
               "enable_coverage": "false",
+              "isValidationToBeSkipped": "false",
               "installationkey": "",
               "project_directory": "",
               "devhub_alias": "HubOrg",
@@ -177,7 +178,7 @@
       "fetchDepth": "0",
       "gitLfsSupport": "false",
       "reportBuildStatus": "true",
-      "connectedServiceId": "$GitHub_1ec3a77e$",
+      "connectedServiceId": "$GitHub_7d9064d5$",
       "skipSyncSource": "false",
       "labelSourcesFormat": "$(build.buildNumber)",
       "labelSources": "0"
@@ -211,5 +212,8 @@
   "uri": "",
   "path": "\\",
   "type": "build",
-  "queueStatus": "enabled"
+  "queueStatus": "enabled",
+  "revision": 9,
+  "createdDate": "",
+  "project": "{}"
 }

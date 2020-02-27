@@ -1,6 +1,6 @@
 {
   "source": "userInterface",
-  "revision": 6,
+  "revision": 7,
   "description": null,
   "createdBy": "{}",
   "createdOn": "",
@@ -165,7 +165,7 @@
             {
               "environment": {},
               "taskId": "dea3a185-c3f5-44a8-841b-1e5044864778",
-              "version": "3.*",
+              "version": "5.*",
               "name": "Deploy force-di to $(env.name)",
               "refName": "",
               "enabled": true,
@@ -185,6 +185,7 @@
                 "testlevel": "NoTestRun",
                 "specified_tests": "",
                 "apextestsuite": "",
+                "isToBreakBuildIfEmpty": "true",
                 "isTelemetryEnabled": "true"
               }
             }
