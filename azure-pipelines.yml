@@ -1,0 +1,150 @@
+name: Milestone10$(Rev:.r)
+
+resources:
+  repositories:
+  - repository: forcedi # The name used to reference this repository in the checkout step
+    type: github
+    endpoint: azlamsalamgit
+    name: azlamsalam/force-di
+
+pr:
+  branches:
+    include:
+    - develop
+    - master
+
+trigger:
+  - feature/*
+  - hoftix/*
+  - bugfix/*
+
+
+variables:
+ - group: Tokens
+ - name: major
+   value: 10
+ - name: minor
+   value: $[counter(variables['major'], 30)]
+ 
+
+
+stages:
+- stage: Develop
+  condition: and( ne(variables['build.Reason'], 'PullRequest'), ne(variables['build.sourceBranch'], 'refs/heads/develop'), ne(variables['build.sourceBranch'], 'refs/heads/master') )
+  jobs:
+  - template: templates/buildplugins.yml  
+    parameters:
+      name: 'DeployToDevelop'
+      commitToGit: false
+      stageToDeploy: 'dev'
+      version: 'auto'
+      environmentToDeploy: 'dev'
+      toBuild: true
+      organization: safebot
+          
+       
+- stage: Review
+  condition:  or ( eq(variables['build.Reason'], 'Schedule'), eq(variables['build.Reason'], 'Manual'), eq(variables['build.Reason'], 'PullRequest'))
+  dependsOn: []
+  jobs:
+   - template: templates/buildplugins.yml   
+     parameters:
+      name: 'DeployToReview'
+      commitToGit: false
+      stageToDeploy: 'review'
+      version: 'review'
+      organization: azlamsalam
+      environmentToDeploy: 'review'
+      toBuild: true
+      buildNumber: $(minor)
+      
+
+   - job: WaitPluginToInstallonReview
+     displayName: 'Wait for  Plugin To Install on Review'
+     dependsOn: DeployToReview
+     pool: server
+     steps:
+      - task: Delay@1
+        inputs:
+         delayForMinutes: '2' 
+
+   - template: templates/prtest.yml   
+     parameters:
+      name: 'TestPrOnLinux'
+      image: 'ubuntu-latest'
+      dependOnJob: 'WaitPluginToInstallonReview'
+      repositoryToCheckout: 'forcedi'
+      directory: 'force-di'
+      service_connection: $(devhub_service_connection)
+
+  
+   - template: templates/prtest.yml   
+     parameters:
+      name: 'TestPrOnWindows'
+      image: 'vs2017-win2016'
+      dependOnJob: 'WaitPluginToInstallonReview'
+      repositoryToCheckout: 'forcedi'
+      directory: 'force-di'
+      service_connection: $(devhub_service_connection)
+    
+    #Currently not available
+  #  - job: MergeBranchToDevelop
+  #    displayName: 'Wait for code to be merged to develop branch'
+  #    dependsOn: 
+  #      - TestPrOnWindows
+  #      - TestPrOnLinux
+  #    pool: server
+  #    steps:
+  #     - task: ManualIntervention@8
+  #       inputs:
+  #         instructions: 'Merge feature/bugfix branch to develop'
+  #         emailRecipients: 'azlam.salam@outlook.com'
+
+- stage: Beta
+  dependsOn: []
+  condition: and(eq(variables['build.sourceBranch'], 'refs/heads/develop'), ne(variables['build.Reason'], 'PullRequest') )
+  jobs:
+   - template: templates/buildplugins.yml   #Build Template
+     parameters:
+      name: 'DeployToBeta'
+      commitToGit: true
+      branchToDeploy: 'develop'
+      stageToDeploy: 'beta'
+      version: 'beta'
+      environmentToDeploy: 'beta'
+      toBuild: true
+      organization: dxatscale
+      buildNumber: $(minor)
+      
+
+
+- stage: Production
+  dependsOn: Beta
+  condition: or(eq(variables['build.sourceBranch'], 'refs/heads/develop'), eq(variables['build.Reason'], 'Schedule'), eq(variables['build.Reason'], 'Manual'))
+  jobs:
+   - template: templates/buildplugins.yml   #Build Template
+     parameters:
+      name: 'DeployToProd'
+      commitToGit: false
+      branchToDeploy: 'develop'
+      stageToDeploy: 'prod'
+      version: 'beta'
+      environmentToDeploy: 'production'
+      toBuild: true
+      buildNumber: $(minor)
+
+   
+  #Currently not available
+  #  - job: MergeBranchToMaster
+  #    displayName: 'Merge Develop Branch to Master'
+  #    dependsOn: 
+  #      - DeployToProd
+  #    pool: server
+  #    steps:
+  #     - task: ManualIntervention@8
+  #       inputs:
+  #         instructions: 'Merge develop branch to master'
+  #         emailRecipients: 'azlam.salam@outlook.com'
+
+  
+  

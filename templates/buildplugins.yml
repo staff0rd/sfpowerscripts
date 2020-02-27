@@ -1,0 +1,110 @@
+parameters:
+  - name: name  # defaults for any parameters that aren't specified
+    default: ''
+  
+  - name: commitToGit
+    type: boolean 
+    default: false
+  
+  - name: branchToDeploy
+    type: string 
+    default: develop
+  
+  - name: stageToDeploy
+    type: string 
+    default: review
+  
+  - name: version
+    type: string 
+    default: auto
+  
+  - name: environmentToDeploy
+    type: string 
+    default: development
+
+  - name: organization
+    type: string 
+    default: ''
+
+
+  - name: buildNumber
+    type: string 
+    default: ''
+  
+  - name: toBuild
+    type: boolean 
+    default: false
+
+jobs:
+  - deployment: ${{ parameters.name }}
+    displayName: 'Build and Deploy to ${{ parameters.environmentToDeploy }}'
+    timeoutInMinutes: 10
+    pool:
+      vmImage: 'vs2017-win2016'
+    environment: ${{ parameters.environmentToDeploy }}
+    condition: and(true, eq(${{ parameters.toBuild }}, true))
+    strategy:
+       runOnce:
+         deploy:
+          steps:
+  
+           - checkout: self
+          
+           - task: CmdLine@2
+             displayName: "Set Git Config"
+             inputs:
+              script: |
+               git config --global user.email "sfpowerkit.ci@dev.azure.com"
+               git config --global user.name "sfpowerkitci"
+             condition: and(true, eq( ${{ parameters.commitToGit }},true))
+        
+           - task: DownloadSecureFile@1
+             displayName: "Download App Tracker Configuration File"
+             name: config
+             inputs:
+              secureFile: 'config.json'
+        
+        
+           - task: CmdLine@2
+             displayName: "Copy App Tracker Configuration File to Build Directory"
+             inputs:
+              script: 'cp -f $(config.secureFilePath)  $(System.DefaultWorkingDirectory)/BuildTasks/Common/config.json'
+            
+        
+           - task: Npm@1
+             displayName: 'Install Dependencies'
+             inputs:
+              verbose: false
+          
+          
+           - task: Npm@1
+             displayName: 'Set Release Mode to ${{ parameters.stageToDeploy }}'
+             inputs:
+              command: custom
+              verbose: false
+              customCommand: 'run increment:version -- --version=${{ parameters.version }}  --stage=${{ parameters.stageToDeploy }} --buildNumber=${{ parameters.buildNumber }}'
+          
+           - task: Npm@1
+             displayName: 'Create package'
+             inputs:
+              command: custom
+              verbose: false
+              customCommand: 'run package'
+        
+           - task: Npm@1
+             displayName: 'Publish the package for ${{ parameters.stageToDeploy }}'
+             inputs:
+              command: custom
+              verbose: false
+              customCommand: 'run publish --  --version=$(Build.BuildNumber) --token=$(azlamsalam_token) --stage=${{ parameters.stageToDeploy }} --organization=${{ parameters.organization }}'
+ 
+           - task: CmdLine@2
+             displayName: 'Push to Repo'
+             inputs:
+              script: |
+                git config --global user.email "sfpowerscripts.ci@dev.azure.com"
+                git config --global user.name "sfpowerscripts"
+                git add vss-extension.json
+                git commit  -m "[skip ci] Updated Version"
+                git push  https://$(github_pat)@github.com/azlamsalam/sfpowerscripts.git  HEAD:${{ parameters.branchToDeploy }}
+             condition: and(true, eq( ${{ parameters.commitToGit }},true))

@@ -1,9 +1,9 @@
 {
     "manifestVersion": 1,
-    "id": "sfpowerscripts-dev",
+    "id": "sfpowerscripts-beta",
     "publisher": "AzlamSalam",
-    "name": "sfpowerscripts (dev)",
-    "version": "9.0.13",
+    "name": "sfpowerscripts (beta)",
+    "version": "10.0.44",
     "description": "Azure Pipelines tasks for working with Salesforce",
     "tags": [
         "Extension",
@@ -37,7 +37,7 @@
     "public": false,
     "targets": [
         {
-            "id": "Microsoft.VisualStudio.Services.Cloud"
+            "id": "Microsoft.VisualStudio.Services"
         }
     ],
     "scopes": [

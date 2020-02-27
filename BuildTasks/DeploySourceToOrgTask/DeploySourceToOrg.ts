@@ -35,12 +35,14 @@ async function run() {
 
     
    
+      let isToBreakBuildIfEmpty= tl.getBoolInput("isToBreakBuildIfEmpty",true)
    
       deploySourceToOrgImpl = new DeploySourceToOrgImpl(
       target_org,
       project_directory,
       source_directory,
-      mdapi_options
+      mdapi_options,
+      isToBreakBuildIfEmpty
     );
     await deploySourceToOrgImpl.exec();
 

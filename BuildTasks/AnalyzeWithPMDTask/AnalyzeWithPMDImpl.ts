@@ -10,7 +10,7 @@ export default class AnalyzeWithPMDImpl {
 
   public async exec(command: string): Promise<void> {
    
-    let child=child_process.exec(command,  { encoding: "utf8", cwd:this.project_directory },(error,stdout,stderr)=>{
+    let child=child_process.exec(command,  { encoding: "utf8",maxBuffer: 1024 * 1024*5, cwd:this.project_directory },(error,stdout,stderr)=>{
 
       if(error)
          throw error;
@@ -40,13 +40,15 @@ export default class AnalyzeWithPMDImpl {
     if(!isNullOrUndefined(this.ouputPath))
     command+=` -o  ${this.ouputPath}`;
 
-    if(!isNullOrUndefined(this.ruleset))
+    if(!isNullOrUndefined(this.ruleset) && this.ruleset.length>0)
     command+=` -r  ${this.ruleset}`;
 
     if(!isNullOrUndefined(this.version))
     command+=` --version=${this.version}`;
 
+    command+=` --loglevel INFO`
 
+    console.log(command);
     return command;
   }
 

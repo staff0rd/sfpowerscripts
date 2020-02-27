@@ -2,7 +2,7 @@ import child_process = require("child_process");
 import tl = require("azure-pipelines-task-lib/task");
 import { delay } from "../Common/Delay";
 import rimraf = require("rimraf");
-import { copyFile, copyFileSync } from "fs";
+import { copyFile, copyFileSync, readdirSync, fstat, existsSync } from "fs";
 import { isNullOrUndefined } from "util";
 import { onExit } from "../Common/OnExit";
 
@@ -11,28 +11,44 @@ export default class DeploySourceToOrgImpl {
     private target_org: string,
     private project_directory: string,
     private source_directory: string,
-    private deployment_options: any
+    private deployment_options: any,
+    private isToBreakBuildIfEmpty: boolean
   ) {}
 
   public async exec() {
-
-    let commandExecStatus:boolean = false;
+    let commandExecStatus: boolean = false;
 
     //Clean mdapi directory
-    rimraf.sync('mdapi');
+    rimraf.sync("mdapi");
+
+
+    //Check Folder Exists and if Build should not be broken , then just skip
+    if(!existsSync(this.source_directory) && !this.isToBreakBuildIfEmpty)
+    {
+    console.log(` Folder not Found , skipping task as isToBreakBuildIfEmpty is ${this.isToBreakBuildIfEmpty}`);
+     return;
+    }
+
+     //Check there is any files inside thie directory and if Build should not be broken , then just skip
+     if(this.isEmptyFolder( this.source_directory) && !this.isToBreakBuildIfEmpty)
+     {
+     console.log(`Empty Folder Found , skipping task as isToBreakBuildIfEmpty is ${this.isToBreakBuildIfEmpty}`);
+     return;
+     }
+
 
     tl.debug("Converting source to mdapi");
     await this.convertSourceToMDAPI();
 
-    try
-    {
-    if(this.deployment_options["checkonly"])
-     copyFileSync(this.deployment_options["validation_ignore"],this.project_directory);
-    }
-    catch(err)
-    {
-     //Do something here
-     console.log("Validation Ignore not found, using .forceignore")
+    try {
+      if (this.deployment_options["checkonly"])
+        copyFileSync(
+          this.deployment_options["validation_ignore"],
+          this.project_directory
+        );
+    } catch (err) {
+      //Do something here
+      console.log("Validation Ignore not found, using .forceignore");
     }
 
     let command = await this.buildExecCommand();
@@ -56,19 +72,16 @@ export default class DeploySourceToOrgImpl {
       );
 
     while (true) {
-      try
-      {
-      result = child_process.execSync(
-        `npx sfdx force:mdapi:deploy:report --json -i ${deploy_id} -u ${this.target_org}`,
-        {
-          cwd: this.project_directory,
-          encoding: "utf8",
-          stdio:['pipe', 'pipe', 'ignore']
-        }
-      );
-      }
-      catch (err)
-      { 
+      try {
+        result = child_process.execSync(
+          `npx sfdx force:mdapi:deploy:report --json -i ${deploy_id} -u ${this.target_org}`,
+          {
+            cwd: this.project_directory,
+            encoding: "utf8",
+            stdio: ["pipe", "pipe", "ignore"]
+          }
+        );
+      } catch (err) {
         console.log(`Validation/Deployment Failed`);
         break;
       }
@@ -91,28 +104,23 @@ export default class DeploySourceToOrgImpl {
         break;
       }
 
-     await delay(30000);
+      await delay(30000);
     }
 
+    let child = child_process.exec(
+      `npx sfdx force:mdapi:deploy:report  -i ${deploy_id} -u ${this.target_org}`,
+      { cwd: this.project_directory, encoding: "utf8" },
+      (error, stdout, stderr) => {}
+    );
 
-
-
-    
-    let child=child_process.exec(  `npx sfdx force:mdapi:deploy:report  -i ${deploy_id} -u ${this.target_org}`,
-      { cwd: this.project_directory,encoding: "utf8" },(error,stdout,stderr)=>{
-
+    child.stdout.on("data", data => {
+      console.log(data.toString());
     });
-   
-    child.stdout.on("data",data=>{console.log(data.toString()); });
-    child.stderr.on("data",data=>{console.log(data.toString()); });
+    child.stderr.on("data", data => {
+      console.log(data.toString());
+    });
 
     await onExit(child);
-
-
-
-
-
-
   }
 
   private async buildExecCommand(): Promise<string> {
@@ -161,23 +169,29 @@ export default class DeploySourceToOrgImpl {
   }
 
   private async convertSourceToMDAPI(): Promise<void> {
-    try
-    {
-
-    if(!isNullOrUndefined(this.project_directory))
-    console.log(`Converting to Source Format ${this.source_directory} in project directory  ${this.project_directory}`);
-    else
-    console.log(`Converting to Source Format ${this.source_directory} in project directory`);
-    child_process.execSync(
-      `npx sfdx force:source:convert -r ${this.source_directory}  -d  mdapi`,
-      { cwd: this.project_directory, encoding: "utf8" }
-    );
-    console.log("Converting to Source Format Completed");
-    }
-    catch(error)
-    {
-      console.log("Unable to convert source, exiting"+error.code);
+    try {
+      if (!isNullOrUndefined(this.project_directory))
+        console.log(
+          `Converting to Source Format ${this.source_directory} in project directory  ${this.project_directory}`
+        );
+      else
+        console.log(
+          `Converting to Source Format ${this.source_directory} in project directory`
+        );
+      child_process.execSync(
+        `npx sfdx force:source:convert -r ${this.source_directory}  -d  mdapi`,
+        { cwd: this.project_directory, encoding: "utf8" }
+      );
+      console.log("Converting to Source Format Completed");
+    } catch (error) {
+      console.log("Unable to convert source, exiting" + error.code);
       throw error;
     }
+  }
+
+  private isEmptyFolder(source_directory): boolean {
+    let files: string[] = readdirSync(source_directory);
+    if (files == null || files.length === 0) return true;
+    else return false;
   }
 }
