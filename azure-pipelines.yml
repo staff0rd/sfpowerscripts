@@ -128,7 +128,7 @@ stages:
       commitToGit: false
       branchToDeploy: 'develop'
       stageToDeploy: 'prod'
-      version: 'beta'
+      version: 'prod'
       environmentToDeploy: 'production'
       toBuild: true
       buildNumber: $(minor)

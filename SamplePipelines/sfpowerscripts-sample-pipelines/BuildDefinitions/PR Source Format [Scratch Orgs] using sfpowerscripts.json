@@ -140,7 +140,7 @@
             "condition": "succeeded()",
             "task": {
               "id": "dea3a185-c3f5-44a8-841b-1e5044864778",
-              "versionSpec": "3.*",
+              "versionSpec": "5.*",
               "definitionType": "task"
             },
             "inputs": {
@@ -153,6 +153,7 @@
               "testlevel": "NoTestRun",
               "specified_tests": "",
               "apextestsuite": "",
+              "isToBreakBuildIfEmpty": "true",
               "isTelemetryEnabled": "true"
             }
           },
@@ -222,6 +223,28 @@
               "test_coverage": "80",
               "isTelemetryEnabled": "true"
             }
+          },
+          {
+            "environment": {},
+            "enabled": true,
+            "continueOnError": false,
+            "alwaysRun": false,
+            "displayName": "Export  scratchorg to metadata",
+            "timeoutInMinutes": 0,
+            "condition": "succeeded()",
+            "task": {
+              "id": "94b1ee4e-c4d3-4203-81d6-3fa28b5a53be",
+              "versionSpec": "1.*",
+              "definitionType": "task"
+            },
+            "inputs": {
+              "target_org": "scratchorg",
+              "source_directory": "metadata",
+              "quickFilter": "",
+              "isManagedPackageComponentsToBeExcluded": "true",
+              "isUnzipEnabled": "true",
+              "isTelemetryEnabled": "true"
+            }
           }
         ],
         "name": "Agent job 1",
@@ -255,7 +278,7 @@
       "fetchDepth": "0",
       "gitLfsSupport": "false",
       "reportBuildStatus": "true",
-      "connectedServiceId": "$GitHub_7f151442$",
+      "connectedServiceId": "$GitHub_b103733f$",
       "skipSyncSource": "false",
       "labelSourcesFormat": "$(build.buildNumber)",
       "labelSources": "0"
@@ -290,7 +313,7 @@
   "path": "\\",
   "type": "build",
   "queueStatus": "enabled",
-  "revision": 11,
+  "revision": 12,
   "createdDate": "",
   "project": "{}"
 }
