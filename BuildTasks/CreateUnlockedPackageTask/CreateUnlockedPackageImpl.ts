@@ -18,25 +18,20 @@ export default class CreateUnlockedPackageImpl {
   ) {}
 
   public async exec(command: string): Promise<string> {
-    let child = child_process.exec(
-      command,
-      { cwd: this.project_directory, encoding: "utf8" },
-      (error, stdout, stderr) => {
-        if (error)
-          child.stderr.on("data", data => {
-            console.log(data.toString());
-            output += data.toString();
-          });
-        throw error;
-      }
-    );
+    
+    let child=child_process.exec(command,  {cwd:this.project_directory, encoding: "utf8" },(error,stdout,stderr)=>{
 
-    let output = "";
-    child.stdout.on("data", data => {
-      console.log(data.toString());
-      output += data.toString();
+      if(error)
+         throw error;
+    });
+   
+  
+    let output="";
+    child.stdout.on("data",data=>{console.log(  data.toString()); 
+      output+=data.toString();
     });
 
+   
     await onExit(child);
 
     let result = JSON.parse(output);
