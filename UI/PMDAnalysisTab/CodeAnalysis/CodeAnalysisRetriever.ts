@@ -23,6 +23,8 @@ export default class CodeAnalysisRetriever {
       "pmd_analysis_results"
     );
 
+    console.log(codeAnalysisAttachement);
+
     let accessToken = await SDK.getAccessToken();
 
     for (let i = 0; i < codeAnalysisAttachement.length; i++) {
