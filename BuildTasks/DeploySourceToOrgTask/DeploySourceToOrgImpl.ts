@@ -22,10 +22,14 @@ export default class DeploySourceToOrgImpl {
     //Clean mdapi directory
     rimraf.sync("mdapi");
 
-    let directoryToCheck = path.join(
-      this.project_directory,
-      this.source_directory
-    );
+    let directoryToCheck;
+
+    if (!isNullOrUndefined(this.project_directory)) {
+      directoryToCheck = path.join(
+        this.project_directory,
+        this.source_directory
+      );
+    } else directoryToCheck = this.source_directory;
 
     try {
       //Check Folder Exists and if Build should not be broken , then just skip
