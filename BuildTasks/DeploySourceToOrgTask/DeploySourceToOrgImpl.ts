@@ -5,6 +5,7 @@ import rimraf = require("rimraf");
 import { copyFile, copyFileSync, readdirSync, fstat, existsSync } from "fs";
 import { isNullOrUndefined } from "util";
 import { onExit } from "../Common/OnExit";
+let path = require("path");
 
 export default class DeploySourceToOrgImpl {
   public constructor(
@@ -21,21 +22,32 @@ export default class DeploySourceToOrgImpl {
     //Clean mdapi directory
     rimraf.sync("mdapi");
 
+    let directoryToCheck = path.join(
+      this.project_directory,
+      this.source_directory
+    );
 
-    //Check Folder Exists and if Build should not be broken , then just skip
-    if(!existsSync(this.source_directory) && !this.isToBreakBuildIfEmpty)
-    {
-    console.log(` Folder not Found , skipping task as isToBreakBuildIfEmpty is ${this.isToBreakBuildIfEmpty}`);
-     return;
+    try {
+      //Check Folder Exists and if Build should not be broken , then just skip
+      if (!existsSync(directoryToCheck) && !this.isToBreakBuildIfEmpty) {
+        console.log(
+          ` Folder not Found , skipping task as isToBreakBuildIfEmpty is ${this.isToBreakBuildIfEmpty}`
+        );
+        return;
+      }
+
+      //Check there is any files inside thie directory and if Build should not be broken , then just skip
+      if (this.isEmptyFolder(directoryToCheck) && !this.isToBreakBuildIfEmpty) {
+        console.log(
+          `Empty Folder Found , skipping task as isToBreakBuildIfEmpty is ${this.isToBreakBuildIfEmpty}`
+        );
+        return;
+      }
+    } catch (err) {
+      console.log(`Something wrong with the path provided ${directoryToCheck}`);
+      if (!this.isToBreakBuildIfEmpty) return;
+      else throw err;
     }
-
-     //Check there is any files inside thie directory and if Build should not be broken , then just skip
-     if(this.isEmptyFolder( this.source_directory) && !this.isToBreakBuildIfEmpty)
-     {
-     console.log(`Empty Folder Found , skipping task as isToBreakBuildIfEmpty is ${this.isToBreakBuildIfEmpty}`);
-     return;
-     }
-
 
     tl.debug("Converting source to mdapi");
     await this.convertSourceToMDAPI();
