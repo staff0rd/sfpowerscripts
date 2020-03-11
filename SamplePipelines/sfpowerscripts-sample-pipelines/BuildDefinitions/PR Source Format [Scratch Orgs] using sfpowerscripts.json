@@ -84,6 +84,31 @@
             "enabled": true,
             "continueOnError": false,
             "alwaysRun": false,
+            "displayName": "Analyze force-di using PMD",
+            "timeoutInMinutes": 0,
+            "condition": "succeeded()",
+            "task": {
+              "id": "2d221ae3-0f82-4cac-a269-ffcd98a72d96",
+              "versionSpec": "4.*",
+              "definitionType": "task"
+            },
+            "inputs": {
+              "directory": "force-di",
+              "ruleset": "sfpowerkit",
+              "rulesetpath": "",
+              "format": "text",
+              "outputPath": "",
+              "version": "6.21.0",
+              "isToBreakBuild": "true",
+              "project_directory": "",
+              "isTelemetryEnabled": "true"
+            }
+          },
+          {
+            "environment": {},
+            "enabled": true,
+            "continueOnError": false,
+            "alwaysRun": false,
             "displayName": "Authenticate  HubOrg using Credentials",
             "timeoutInMinutes": 0,
             "condition": "succeeded()",
@@ -162,31 +187,6 @@
             "enabled": true,
             "continueOnError": false,
             "alwaysRun": false,
-            "displayName": "Analyze force-di using PMD",
-            "timeoutInMinutes": 0,
-            "condition": "succeeded()",
-            "task": {
-              "id": "2d221ae3-0f82-4cac-a269-ffcd98a72d96",
-              "versionSpec": "4.*",
-              "definitionType": "task"
-            },
-            "inputs": {
-              "directory": "force-di",
-              "ruleset": "sfpowerkit",
-              "rulesetpath": "",
-              "format": "text",
-              "outputPath": "",
-              "version": "6.18.0",
-              "isToBreakBuild": "true",
-              "project_directory": "",
-              "isTelemetryEnabled": "true"
-            }
-          },
-          {
-            "environment": {},
-            "enabled": true,
-            "continueOnError": false,
-            "alwaysRun": false,
             "displayName": "Trigger Apex Tests in scratchorg",
             "timeoutInMinutes": 0,
             "condition": "succeeded()",
@@ -223,28 +223,6 @@
               "test_coverage": "80",
               "isTelemetryEnabled": "true"
             }
-          },
-          {
-            "environment": {},
-            "enabled": true,
-            "continueOnError": false,
-            "alwaysRun": false,
-            "displayName": "Export  scratchorg to metadata",
-            "timeoutInMinutes": 0,
-            "condition": "succeeded()",
-            "task": {
-              "id": "94b1ee4e-c4d3-4203-81d6-3fa28b5a53be",
-              "versionSpec": "1.*",
-              "definitionType": "task"
-            },
-            "inputs": {
-              "target_org": "scratchorg",
-              "source_directory": "metadata",
-              "quickFilter": "",
-              "isManagedPackageComponentsToBeExcluded": "true",
-              "isUnzipEnabled": "true",
-              "isTelemetryEnabled": "true"
-            }
           }
         ],
         "name": "Agent job 1",
@@ -278,7 +256,7 @@
       "fetchDepth": "0",
       "gitLfsSupport": "false",
       "reportBuildStatus": "true",
-      "connectedServiceId": "$GitHub_b103733f$",
+      "connectedServiceId": "$GitHub_564a3980$",
       "skipSyncSource": "false",
       "labelSourcesFormat": "$(build.buildNumber)",
       "labelSources": "0"
@@ -313,7 +291,7 @@
   "path": "\\",
   "type": "build",
   "queueStatus": "enabled",
-  "revision": 12,
+  "revision": 15,
   "createdDate": "",
   "project": "{}"
 }
