@@ -73,7 +73,7 @@ async function run() {
         package_type:"unlocked"
      };
 
-     let artifactFileName:string = `/${sfdx_package}+_artifact_metadata`;
+     let artifactFileName:string = `/${sfdx_package}_artifact_metadata`;
 
       fs.writeFileSync(__dirname + artifactFileName, JSON.stringify(metadata));
 
