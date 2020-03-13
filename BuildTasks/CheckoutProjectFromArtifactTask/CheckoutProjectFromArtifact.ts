@@ -3,6 +3,7 @@ var fs = require("fs-extra");
 const path = require("path");
 import simplegit from "simple-git/promise";
 import { AppInsights } from "../Common/AppInsights";
+import { isNullOrUndefined } from "util";
 
 async function run() {
   try {
@@ -10,6 +11,8 @@ async function run() {
 
     const artifact = tl.getInput("artifact", true);
     const artifact_type = tl.getInput("typeOfArtifact", true);
+    let packageName = tl.getInput("package",false);
+
     let version_control_provider: string;
     let token;
     let username: string;
@@ -55,11 +58,13 @@ async function run() {
 
     let artifact_directory = tl.getVariable("system.artifactsDirectory");
 
+    let artifactFileNameSelector = isNullOrUndefined(packageName)?  "artifact_metadata": packageName+"_artifact_metadata";
+
     let package_version_id_file_path = path.join(
       artifact_directory,
       artifact,
       "sfpowerkit_artifact",
-      "artifact_metadata"
+      artifactFileNameSelector
     );
 
     let package_metadata_json = fs

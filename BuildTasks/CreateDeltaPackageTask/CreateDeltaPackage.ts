@@ -79,10 +79,11 @@ async function run() {
       let commit_id = tl.getVariable("build.sourceVersion");
 
       let metadata = {
+        package_name: project,
         sourceVersion: commit_id,
         repository_url: repository_url,
         package_type: "delta",
-        version_name: versionName
+        package_version_number: versionName
       };
 
       fs.writeFileSync(

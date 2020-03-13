@@ -67,6 +67,8 @@ async function run() {
 
 
       let metadata = {
+        package_name: sfdx_package,
+        package_version_number: version_number,
         package_version_id: package_version_id,
         sourceVersion: commit_id,
         repository_url:repository_url,
