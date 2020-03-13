@@ -7,9 +7,9 @@
   "category": "Build",
   "author": "azlam.abdulsalam",
   "version": {
-    "Major": 6,
+    "Major": 7,
     "Minor": 0,
-    "Patch": 2
+    "Patch": 0
   },
   "runsOn": ["Agent"],
   "instanceNameFormat": "Creates a new version of  $(package)",

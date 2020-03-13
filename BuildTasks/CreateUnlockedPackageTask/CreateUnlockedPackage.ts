@@ -73,7 +73,9 @@ async function run() {
         package_type:"unlocked"
      };
 
-      fs.writeFileSync(__dirname + "/artifact_metadata", JSON.stringify(metadata));
+     let artifactFileName:string = `/${sfdx_package}+_artifact_metadata`;
+
+      fs.writeFileSync(__dirname + artifactFileName, JSON.stringify(metadata));
 
       let data = {
         artifacttype: "container",
@@ -84,8 +86,8 @@ async function run() {
       data["containerfolder"] = "sfpowerkit_artifact";
 
       // add localpath to ##vso command's properties for back compat of old Xplat agent
-      data["localpath"] = __dirname + "/artifact_metadata";
-      tl.command("artifact.upload", data, __dirname + "/artifact_metadata");
+      data["localpath"] = __dirname + artifactFileName;
+      tl.command("artifact.upload", data, __dirname + artifactFileName);
     }
   } catch (err) {
     AppInsights.trackExcepiton("sfpwowerscripts-createunlockedpackage-task",err);

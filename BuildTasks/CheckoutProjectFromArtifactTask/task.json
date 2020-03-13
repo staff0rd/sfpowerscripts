@@ -7,9 +7,9 @@
   "category": "Utility",
   "author": "azlam.abdulsalam",
   "version": {
-    "Major": 8,
+    "Major": 9,
     "Minor": 0,
-    "Patch": 1
+    "Patch": 0
   },
   "runsOn": ["Agent"],
   "instanceNameFormat": "Checkout $(artifact) from associated build pipeline",
