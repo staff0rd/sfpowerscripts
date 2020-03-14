@@ -11,12 +11,13 @@ async function run() {
 
     const artifact = tl.getInput("artifact", true);
     const artifact_type = tl.getInput("typeOfArtifact", true);
-    let packageName = tl.getInput("package",false);
+    let packageName = tl.getInput("package", false);
 
     let version_control_provider: string;
     let token;
     let username: string;
 
+    //Read Git User Endpoint
     if (artifact_type != "delta") {
       version_control_provider = tl.getInput("versionControlProvider", true);
 
@@ -56,9 +57,13 @@ async function run() {
       }
     }
 
+    //Read Artifact Metadata
     let artifact_directory = tl.getVariable("system.artifactsDirectory");
 
-    let artifactFileNameSelector = isNullOrUndefined(packageName)?  "artifact_metadata": packageName+"_artifact_metadata";
+     //For Backward Compatibility, packageName could be null when upgraded
+    let artifactFileNameSelector = isNullOrUndefined(packageName)
+      ? "artifact_metadata"
+      : packageName + "_artifact_metadata";
 
     let package_version_id_file_path = path.join(
       artifact_directory,
@@ -75,16 +80,15 @@ async function run() {
 
     console.log(package_metadata);
 
-    let local_source_directory = path.join(
-      artifact_directory,
-      artifact,
-      "source"
-    );
+
+    //For Backward Compatibility, packageName could be null when upgraded
+    let local_source_directory = isNullOrUndefined(packageName)
+      ? path.join(artifact_directory, artifact, "source")
+      : path.join(artifact_directory, artifact, packageName, "source");
+
 
     fs.mkdirSync(local_source_directory, { recursive: true });
-
     console.log(`Source Directory created at ${local_source_directory}`);
-
     tl.debug(package_metadata.package_type);
     console.log(package_metadata.package_type);
 
@@ -136,7 +140,7 @@ async function run() {
       });
 
       tl.debug("Copying Files to a proper directory");
-      fs.copySync(delta_artifact_location, local_source_directory,{
+      fs.copySync(delta_artifact_location, local_source_directory, {
         overwrite: true
       });
     }
