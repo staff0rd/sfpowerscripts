@@ -102,8 +102,8 @@ async function run() {
       data["containerfolder"] = "sfpowerkit_artifact";
 
       // add localpath to ##vso command's properties for back compat of old Xplat agent
-      data["localpath"] = __dirname + sfdx_package;
-      tl.command("artifact.upload", data, __dirname + sfdx_package);
+      data["localpath"] = __dirname + artifactFileName;
+      tl.command("artifact.upload", data, __dirname + artifactFileName);
     }
   } catch (err) {
     tl.setResult(tl.TaskResult.Failed, err.message);
