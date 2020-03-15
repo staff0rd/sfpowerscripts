@@ -148,8 +148,8 @@ async function run() {
 
       //For Backward Compatibility, packageName could be null when upgraded
       let delta_artifact_location = isNullOrUndefined(packageName)
-        ? path.join(artifact_directory, artifact, "source")
-        : path.join(artifact_directory, artifact, packageName, "source");
+        ? path.join(artifact_directory, artifact, "sfpowerscripts_delta_package")
+        : path.join(artifact_directory, artifact, `${packageName}_sfpowerscripts_delta_package`);
 
       tl.debug(`Delta Directory is at ${delta_artifact_location}`);
 
