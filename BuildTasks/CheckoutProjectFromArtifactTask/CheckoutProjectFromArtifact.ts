@@ -79,31 +79,23 @@ async function run() {
 
     let package_metadata = JSON.parse(package_metadata_json);
 
-    console.log(package_metadata);
+     //Create Location
 
-    let local_source_directory;
+      //For Backward Compatibility, packageName could be null when upgraded
+      let local_source_directory = isNullOrUndefined(packageName)
+        ? path.join(artifact_directory, artifact, "source")
+        : path.join(artifact_directory, artifact, packageName, "source");
+
+      shell.mkdir('-p', local_source_directory);
+      
+      console.log(`Source Directory created at ${local_source_directory}`);
+      console.log(`The Package Type : ${package_metadata.package_type}`);
 
     if (
       package_metadata.package_type === "source" ||
       package_metadata.package_type === "unlocked"
     ) {
-
-
-      //Create Location
-
-      //For Backward Compatibility, packageName could be null when upgraded
-       local_source_directory = isNullOrUndefined(packageName)
-        ? path.join(artifact_directory, artifact, "source")
-        : path.join(artifact_directory, artifact, packageName, "source");
-
-      fs.mkdirSync(local_source_directory, { recursive: true });
-      console.log(`Source Directory created at ${local_source_directory}`);
-
-
-
-      tl.debug(package_metadata.package_type);
-      console.log(package_metadata.package_type);
-
+     
       //Strinp https
       const removeHttps = input => input.replace(/^https?:\/\//, "");
 
@@ -135,18 +127,6 @@ async function run() {
       console.log(`Checked Out ${package_metadata.sourceVersion} sucessfully`);
     } else if (package_metadata.package_type === "delta") {
   
-       //Create Location
-
-      //For Backward Compatibility, packageName could be null when upgraded
-      local_source_directory = isNullOrUndefined(packageName)
-        ? path.join(artifact_directory, artifact, "source")
-        : path.join(artifact_directory, artifact, packageName, "source");
-
-      shell.mkdir('-p', local_source_directory);
-      console.log(`Source Directory created at ${local_source_directory}`);
-
-
-
       //For Backward Compatibility, packageName could be null when upgraded
       let delta_artifact_location = isNullOrUndefined(packageName)
         ? path.join(artifact_directory, artifact, "sfpowerscripts_delta_package")
@@ -159,7 +139,7 @@ async function run() {
         tl.debug(file);
       });
 
-      tl.debug("Copying Files to a proper directory");
+      tl.debug("Copying Files to a source directory");
       fs.copySync(delta_artifact_location, local_source_directory, {
         overwrite: true
       });
