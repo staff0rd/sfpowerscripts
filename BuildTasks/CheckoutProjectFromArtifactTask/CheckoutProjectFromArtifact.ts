@@ -4,6 +4,7 @@ const path = require("path");
 import simplegit from "simple-git/promise";
 import { AppInsights } from "../Common/AppInsights";
 import { isNullOrUndefined } from "util";
+var shell = require('shelljs');
 
 async function run() {
   try {
@@ -141,7 +142,7 @@ async function run() {
         ? path.join(artifact_directory, artifact, "source")
         : path.join(artifact_directory, artifact, packageName, "source");
 
-      fs.mkdirSync(local_source_directory, { recursive: true });
+      shell.mkdir('-p', local_source_directory);
       console.log(`Source Directory created at ${local_source_directory}`);
 
 
