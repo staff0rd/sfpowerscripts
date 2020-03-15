@@ -7,7 +7,7 @@ const fs = require("fs");
 
 async function run() {
   try {
-    const sfdx_package = tl.getInput("package", false);
+    const sfdx_package = tl.getInput("package", true);
     const projectDirectory = tl.getInput("project_directory", false);
     const versionName: string = tl.getInput("version_name", false);
     const setBuildName: boolean = tl.getBoolInput("set_build_name",true);
@@ -58,7 +58,7 @@ async function run() {
 
     let artifactFilePath = path.join(
       tl.getVariable("build.repository.localpath"),
-      "src_delta"
+      `${sfdx_package}_src_delta`
     );
 
 

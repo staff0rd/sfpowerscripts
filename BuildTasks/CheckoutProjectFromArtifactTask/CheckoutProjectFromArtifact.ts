@@ -126,11 +126,14 @@ async function run() {
 
       console.log(`Checked Out ${package_metadata.sourceVersion} sucessfully`);
     } else if (package_metadata.package_type === "delta") {
-      let delta_artifact_location = path.join(
-        artifact_directory,
-        artifact,
-        "sfpowerscripts_delta_package"
-      );
+
+
+
+ //For Backward Compatibility, packageName could be null when upgraded
+    let delta_artifact_location = isNullOrUndefined(packageName)
+    ? path.join(artifact_directory, artifact, "source")
+    : path.join(artifact_directory, artifact, packageName, "source");
+
 
       tl.debug(`Delta Directory is at ${delta_artifact_location}`);
 

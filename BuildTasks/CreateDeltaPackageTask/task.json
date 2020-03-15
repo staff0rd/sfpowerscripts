@@ -9,7 +9,7 @@
   "version": {
     "Major": 2,
     "Minor": 0,
-    "Patch": 2
+    "Patch": 3
   },
   "instanceNameFormat": "Create Delta Package based on two commits",
   "inputs": [
@@ -18,8 +18,8 @@
       "type": "string",
       "label": "Name of the package",
       "defaultValue": "",
-      "required": false,
-      "helpMarkDown": "The name of the package"
+      "required": true,
+      "helpMarkDown": "The name of the package, If the project doesnt have packages, provide a name for the project without spaces"
     },
     {
       "name": "version_name",
