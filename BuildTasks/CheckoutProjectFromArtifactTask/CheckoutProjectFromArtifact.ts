@@ -60,7 +60,7 @@ async function run() {
     //Read Artifact Metadata
     let artifact_directory = tl.getVariable("system.artifactsDirectory");
 
-     //For Backward Compatibility, packageName could be null when upgraded
+    //For Backward Compatibility, packageName could be null when upgraded
     let artifactFileNameSelector = isNullOrUndefined(packageName)
       ? "artifact_metadata"
       : packageName + "_artifact_metadata";
@@ -80,22 +80,29 @@ async function run() {
 
     console.log(package_metadata);
 
-
-    //For Backward Compatibility, packageName could be null when upgraded
-    let local_source_directory = isNullOrUndefined(packageName)
-      ? path.join(artifact_directory, artifact, "source")
-      : path.join(artifact_directory, artifact, packageName, "source");
-
-
-    fs.mkdirSync(local_source_directory, { recursive: true });
-    console.log(`Source Directory created at ${local_source_directory}`);
-    tl.debug(package_metadata.package_type);
-    console.log(package_metadata.package_type);
+    let local_source_directory;
 
     if (
       package_metadata.package_type === "source" ||
       package_metadata.package_type === "unlocked"
     ) {
+
+
+      //Create Location
+
+      //For Backward Compatibility, packageName could be null when upgraded
+       local_source_directory = isNullOrUndefined(packageName)
+        ? path.join(artifact_directory, artifact, "source")
+        : path.join(artifact_directory, artifact, packageName, "source");
+
+      fs.mkdirSync(local_source_directory, { recursive: true });
+      console.log(`Source Directory created at ${local_source_directory}`);
+
+
+
+      tl.debug(package_metadata.package_type);
+      console.log(package_metadata.package_type);
+
       //Strinp https
       const removeHttps = input => input.replace(/^https?:\/\//, "");
 
@@ -126,14 +133,23 @@ async function run() {
 
       console.log(`Checked Out ${package_metadata.sourceVersion} sucessfully`);
     } else if (package_metadata.package_type === "delta") {
+  
+       //Create Location
+
+      //For Backward Compatibility, packageName could be null when upgraded
+      local_source_directory = isNullOrUndefined(packageName)
+        ? path.join(artifact_directory, artifact, "source")
+        : path.join(artifact_directory, artifact, packageName, "source");
+
+      fs.mkdirSync(local_source_directory, { recursive: true });
+      console.log(`Source Directory created at ${local_source_directory}`);
 
 
 
- //For Backward Compatibility, packageName could be null when upgraded
-    let delta_artifact_location = isNullOrUndefined(packageName)
-    ? path.join(artifact_directory, artifact, "source")
-    : path.join(artifact_directory, artifact, packageName, "source");
-
+      //For Backward Compatibility, packageName could be null when upgraded
+      let delta_artifact_location = isNullOrUndefined(packageName)
+        ? path.join(artifact_directory, artifact, "source")
+        : path.join(artifact_directory, artifact, packageName, "source");
 
       tl.debug(`Delta Directory is at ${delta_artifact_location}`);
 

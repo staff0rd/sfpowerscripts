@@ -60,24 +60,24 @@ async function run() {
       tl.getVariable("build.repository.localpath"),
       `${sfdx_package}_src_delta`
     );
-
-
     tl.setVariable("sfpowerscripts_delta_package_path", artifactFilePath);
 
-    
     if (build_artifact_enabled) {
   
    
-    tl.command(
+      //Write Artifact  Delta
+
+       tl.command(
       "artifact.upload",
-      { artifactname: `sfpowerscripts_delta_package` },
+      { artifactname: `${sfdx_package}_sfpowerscripts_delta_package` },
       artifactFilePath
     );
 
  
+      //Write artifact Metadata
+      
       let repository_url = tl.getVariable("build.repository.uri");
       let commit_id = tl.getVariable("build.sourceVersion");
-
       let metadata = {
         package_name: sfdx_package,
         sourceVersion: commit_id,
