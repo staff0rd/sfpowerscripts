@@ -1,6 +1,6 @@
 import tl = require("azure-pipelines-task-lib/task");
 import InstallUnlockedPackageImpl from "./InstallUnlockedPackageImpl";
-var fs = require("fs");
+var fs = require("fs-extra");
 const path = require("path");
 
 import { AppInsights } from "../Common/AppInsights";
