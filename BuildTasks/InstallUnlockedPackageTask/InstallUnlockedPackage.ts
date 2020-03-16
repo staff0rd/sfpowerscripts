@@ -34,6 +34,8 @@ async function run() {
 
       //Fallback to older format
       if (!fs.existsSync(package_version_id_file_path)) {
+
+        console.log("Falling back to older artifact format");
         package_version_id_file_path = path.join(
           artifact_directory,
           artifact,
@@ -42,15 +44,22 @@ async function run() {
         );
       }
 
+     
+
       let package_metadata_json = fs
         .readFileSync(package_version_id_file_path)
         .toString();
 
+       
+
       let package_metadata = JSON.parse(package_metadata_json);
+      console.log("Package Metadata:");
+      console.log(package_metadata);
+      
 
       package_version_id = package_metadata.package_version_id;
 
-      console.log(`Found Package Version Id in artifact ${package_version_id}`);
+      console.log(`Using Package Version Id ${package_version_id}`);
 
       AppInsights.trackTaskEvent(
         "sfpwowerscript-installunlockedpackage-task",
