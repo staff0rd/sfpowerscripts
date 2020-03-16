@@ -38,7 +38,7 @@ async function run() {
           artifact_directory,
           artifact,
           "sfpowerkit_artifact",
-          `${sfdx_package}_artifact_metadata`
+          `artifact_metadata`
         );
       }
 
