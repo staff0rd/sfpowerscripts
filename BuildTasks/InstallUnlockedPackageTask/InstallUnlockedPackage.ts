@@ -1,6 +1,6 @@
 import tl = require("azure-pipelines-task-lib/task");
 import InstallUnlockedPackageImpl from "./InstallUnlockedPackageImpl";
-var fs = require("fs-extra");
+var fs = require("fs");
 const path = require("path");
 
 import { AppInsights } from "../Common/AppInsights";
@@ -33,7 +33,7 @@ async function run() {
       );
 
       //Fallback to older format
-      if (!fs.existSync(package_version_id_file_path)) {
+      if (!fs.existsSync(package_version_id_file_path)) {
         package_version_id_file_path = path.join(
           artifact_directory,
           artifact,
