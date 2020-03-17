@@ -3,6 +3,8 @@ var fs = require("fs-extra");
 const path = require("path");
 import simplegit from "simple-git/promise";
 import { AppInsights } from "../Common/AppInsights";
+import { isNullOrUndefined } from "util";
+var shell = require('shelljs');
 
 async function run() {
   try {
@@ -10,10 +12,13 @@ async function run() {
 
     const artifact = tl.getInput("artifact", true);
     const artifact_type = tl.getInput("typeOfArtifact", true);
+    let packageName = tl.getInput("package", false);
+
     let version_control_provider: string;
     let token;
     let username: string;
 
+    //Read Git User Endpoint
     if (artifact_type != "delta") {
       version_control_provider = tl.getInput("versionControlProvider", true);
 
@@ -53,13 +58,19 @@ async function run() {
       }
     }
 
+    //Read Artifact Metadata
     let artifact_directory = tl.getVariable("system.artifactsDirectory");
+
+    //For Backward Compatibility, packageName could be null when upgraded
+    let artifactFileNameSelector = isNullOrUndefined(packageName)
+      ? "artifact_metadata"
+      : packageName + "_artifact_metadata";
 
     let package_version_id_file_path = path.join(
       artifact_directory,
       artifact,
       "sfpowerkit_artifact",
-      "artifact_metadata"
+      artifactFileNameSelector
     );
 
     let package_metadata_json = fs
@@ -68,25 +79,23 @@ async function run() {
 
     let package_metadata = JSON.parse(package_metadata_json);
 
-    console.log(package_metadata);
+     //Create Location
 
-    let local_source_directory = path.join(
-      artifact_directory,
-      artifact,
-      "source"
-    );
+      //For Backward Compatibility, packageName could be null when upgraded
+      let local_source_directory = isNullOrUndefined(packageName)
+        ? path.join(artifact_directory, artifact, "source")
+        : path.join(artifact_directory, artifact, packageName, "source");
 
-    fs.mkdirSync(local_source_directory, { recursive: true });
-
-    console.log(`Source Directory created at ${local_source_directory}`);
-
-    tl.debug(package_metadata.package_type);
-    console.log(package_metadata.package_type);
+      shell.mkdir('-p', local_source_directory);
+      
+      console.log(`Source Directory created at ${local_source_directory}`);
+      console.log(`The Package Type : ${package_metadata.package_type}`);
 
     if (
       package_metadata.package_type === "source" ||
       package_metadata.package_type === "unlocked"
     ) {
+     
       //Strinp https
       const removeHttps = input => input.replace(/^https?:\/\//, "");
 
@@ -117,11 +126,11 @@ async function run() {
 
       console.log(`Checked Out ${package_metadata.sourceVersion} sucessfully`);
     } else if (package_metadata.package_type === "delta") {
-      let delta_artifact_location = path.join(
-        artifact_directory,
-        artifact,
-        "sfpowerscripts_delta_package"
-      );
+  
+      //For Backward Compatibility, packageName could be null when upgraded
+      let delta_artifact_location = isNullOrUndefined(packageName)
+        ? path.join(artifact_directory, artifact, "sfpowerscripts_delta_package")
+        : path.join(artifact_directory, artifact, `${packageName}_sfpowerscripts_delta_package`);
 
       tl.debug(`Delta Directory is at ${delta_artifact_location}`);
 
@@ -130,8 +139,8 @@ async function run() {
         tl.debug(file);
       });
 
-      tl.debug("Copying Files to a proper directory");
-      fs.copySync(delta_artifact_location, local_source_directory,{
+      tl.debug("Copying Files to a source directory");
+      fs.copySync(delta_artifact_location, local_source_directory, {
         overwrite: true
       });
     }

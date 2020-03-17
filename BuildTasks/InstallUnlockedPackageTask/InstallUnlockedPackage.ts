@@ -11,8 +11,7 @@ async function run() {
     const sfdx_package: string = tl.getInput("package", true);
 
     const package_installedfrom = tl.getInput("packageinstalledfrom", true);
-    AppInsights.setupAppInsights(tl.getBoolInput("isTelemetryEnabled",true));
-
+    AppInsights.setupAppInsights(tl.getBoolInput("isTelemetryEnabled", true));
 
     let package_version_id;
 
@@ -23,31 +22,55 @@ async function run() {
 
       let artifact_directory = tl.getVariable("system.artifactsDirectory");
 
-      let package_version_id_file_path = path.join(
+      //Newer metadata filename
+      let package_version_id_file_path;
+
+      package_version_id_file_path = path.join(
         artifact_directory,
         artifact,
         "sfpowerkit_artifact",
-        "artifact_metadata"
+        `${sfdx_package}_artifact_metadata`
       );
+
+      //Fallback to older format
+      if (!fs.existsSync(package_version_id_file_path)) {
+
+        console.log("Falling back to older artifact format");
+        package_version_id_file_path = path.join(
+          artifact_directory,
+          artifact,
+          "sfpowerkit_artifact",
+          `artifact_metadata`
+        );
+      }
+
+     
 
       let package_metadata_json = fs
         .readFileSync(package_version_id_file_path)
         .toString();
 
+       
+
       let package_metadata = JSON.parse(package_metadata_json);
+      console.log("Package Metadata:");
+      console.log(package_metadata);
+      
 
-      package_version_id = package_metadata.package_version_id
+      package_version_id = package_metadata.package_version_id;
 
+      console.log(`Using Package Version Id ${package_version_id}`);
 
-      console.log(`Found Package Version Id in artifact ${package_version_id}`);
-
-     
-      AppInsights.trackTaskEvent("sfpwowerscript-installunlockedpackage-task","using_artifact"); 
-
-
+      AppInsights.trackTaskEvent(
+        "sfpwowerscript-installunlockedpackage-task",
+        "using_artifact"
+      );
     } else {
       package_version_id = tl.getInput("package_version_id", false);
-      AppInsights.trackTaskEvent("sfpwowerscript-installunlockedpackage-task","using_id"); 
+      AppInsights.trackTaskEvent(
+        "sfpwowerscript-installunlockedpackage-task",
+        "using_id"
+      );
     }
 
     const installationkey = tl.getInput("installationkey", false);
@@ -79,9 +102,11 @@ async function run() {
     await installUnlockedPackageImpl.exec();
     AppInsights.trackTask("sfpwowerscript-installunlockedpackage-task");
   } catch (err) {
-    AppInsights.trackTaskEvent("sfpwowerscript-installunlockedpackage-task",err); 
+    AppInsights.trackTaskEvent(
+      "sfpwowerscript-installunlockedpackage-task",
+      err
+    );
     tl.setResult(tl.TaskResult.Failed, err.message);
-
   }
 }
 
