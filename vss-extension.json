@@ -234,7 +234,7 @@
                                 "inputMode": "textbox",
                                 "isConfidential": true,
                                 "validation": {
-                                    "isRequired": true,
+                                    "isRequired": false,
                                     "dataType": "string"
                                 }
                             },
