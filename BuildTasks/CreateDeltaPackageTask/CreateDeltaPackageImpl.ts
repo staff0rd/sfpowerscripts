@@ -5,7 +5,7 @@ import { isNullOrUndefined } from "util";
 export default class CreateDeltaPackageImpl {
   public constructor(
     private projectDirectory: string,
-    private project: string,
+    private sfdx_package: string,
     private revisionFrom: string,
     private revisionTo: string,
     private generateDestructiveManifest: boolean,
@@ -43,7 +43,7 @@ export default class CreateDeltaPackageImpl {
 
     if (this.generateDestructiveManifest) command += ` -x`;
 
-    command += ` -d  src_delta`;
+    command += ` -d  ${this.sfdx_package}_src_delta`;
 
 
     if(!isNullOrUndefined(this.options['bypass_directories']))
