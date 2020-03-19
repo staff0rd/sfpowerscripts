@@ -7,7 +7,7 @@ const fs = require("fs");
 
 async function run() {
   try {
-    const project = tl.getInput("package", false);
+    const sfdx_package = tl.getInput("package", true);
     const projectDirectory = tl.getInput("project_directory", false);
     const versionName: string = tl.getInput("version_name", false);
     const setBuildName: boolean = tl.getBoolInput("set_build_name",true);
@@ -44,7 +44,7 @@ async function run() {
 
     let createDeltaPackageImp = new CreateDeltaPackageImpl(
       projectDirectory,
-      project,
+      sfdx_package,
       revisionFrom,
       revision_to,
       generate_destructivemanifest,
@@ -58,35 +58,38 @@ async function run() {
 
     let artifactFilePath = path.join(
       tl.getVariable("build.repository.localpath"),
-      "src_delta"
+      `${sfdx_package}_src_delta`
     );
-
-
     tl.setVariable("sfpowerscripts_delta_package_path", artifactFilePath);
 
-    
     if (build_artifact_enabled) {
   
+   
+      //Write Artifact  Delta
 
-    tl.command(
+       tl.command(
       "artifact.upload",
-      { artifactname: `sfpowerscripts_delta_package` },
+      { artifactname: `${sfdx_package}_sfpowerscripts_delta_package` },
       artifactFilePath
     );
 
  
+      //Write artifact Metadata
+      
       let repository_url = tl.getVariable("build.repository.uri");
       let commit_id = tl.getVariable("build.sourceVersion");
-
       let metadata = {
+        package_name: sfdx_package,
         sourceVersion: commit_id,
         repository_url: repository_url,
         package_type: "delta",
-        version_name: versionName
+        package_version_number: versionName
       };
 
+      let artifactFileName:string = `/${sfdx_package}_artifact_metadata`;
+
       fs.writeFileSync(
-        __dirname + "/artifact_metadata",
+        __dirname + artifactFileName,
         JSON.stringify(metadata)
       );
 
@@ -99,8 +102,8 @@ async function run() {
       data["containerfolder"] = "sfpowerkit_artifact";
 
       // add localpath to ##vso command's properties for back compat of old Xplat agent
-      data["localpath"] = __dirname + "/artifact_metadata";
-      tl.command("artifact.upload", data, __dirname + "/artifact_metadata");
+      data["localpath"] = __dirname + artifactFileName;
+      tl.command("artifact.upload", data, __dirname + artifactFileName);
     }
   } catch (err) {
     tl.setResult(tl.TaskResult.Failed, err.message);

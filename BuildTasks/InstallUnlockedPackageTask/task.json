@@ -7,9 +7,9 @@
     "category": "Deploy",
     "author": "azlam.abdulsalam",
     "version": {
-        "Major": 6,
+        "Major": 7,
         "Minor": 0,
-        "Patch": 0
+        "Patch": 4
     },
     "runsOn": [
         "Agent"
