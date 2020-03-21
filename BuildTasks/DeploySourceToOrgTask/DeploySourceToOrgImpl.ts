@@ -1,11 +1,16 @@
 import child_process = require("child_process");
-import tl = require("azure-pipelines-task-lib/task");
 import { delay } from "../Common/Delay";
 import rimraf = require("rimraf");
-import { copyFile, copyFileSync, readdirSync, fstat, existsSync } from "fs";
+import { copyFile, copyFileSync, readdirSync, fstat, existsSync, stat } from "fs";
 import { isNullOrUndefined } from "util";
 import { onExit } from "../Common/OnExit";
 let path = require("path");
+
+export interface DeploySourceResult {
+  deploy_id: string;
+  result: boolean;
+  message: string;
+}
 
 export default class DeploySourceToOrgImpl {
   public constructor(
@@ -16,44 +21,31 @@ export default class DeploySourceToOrgImpl {
     private isToBreakBuildIfEmpty: boolean
   ) {}
 
-  public async exec() {
+  public async exec(): Promise<DeploySourceResult> {
     let commandExecStatus: boolean = false;
+    let deploySourceResult = {} as DeploySourceResult;
 
     //Clean mdapi directory
-    rimraf.sync("mdapi");
+    rimraf.sync("sfpowerscripts_mdapi");
 
-    let directoryToCheck;
 
-    if (!isNullOrUndefined(this.project_directory)) {
-      directoryToCheck = path.join(
-        this.project_directory,
-        this.source_directory
-      );
-    } else directoryToCheck = this.source_directory;
-
-    try {
-      //Check Folder Exists and if Build should not be broken , then just skip
-      if (!existsSync(directoryToCheck) && !this.isToBreakBuildIfEmpty) {
-        console.log(
-          ` Folder not Found , skipping task as isToBreakBuildIfEmpty is ${this.isToBreakBuildIfEmpty}`
-        );
-        return;
-      }
-
-      //Check there is any files inside thie directory and if Build should not be broken , then just skip
-      if (this.isEmptyFolder(directoryToCheck) && !this.isToBreakBuildIfEmpty) {
-        console.log(
-          `Empty Folder Found , skipping task as isToBreakBuildIfEmpty is ${this.isToBreakBuildIfEmpty}`
-        );
-        return;
-      }
-    } catch (err) {
-      console.log(`Something wrong with the path provided ${directoryToCheck}`);
-      if (!this.isToBreakBuildIfEmpty) return;
-      else throw err;
+    //Check empty conditions
+    let status = this.isToBreakBuildForEmptyDirectory();
+    if (status.result == "break") {
+      deploySourceResult.result = false;
+      deploySourceResult.message = status.message;
+      return deploySourceResult;
+    }
+    else if(status.result=="skip")
+    {
+      deploySourceResult.result = true;
+      deploySourceResult.message = status.message;
+      return deploySourceResult;
     }
 
-    tl.debug("Converting source to mdapi");
+
+
+    console.log("Converting source to mdapi");
     await this.convertSourceToMDAPI();
 
     try {
@@ -67,16 +59,23 @@ export default class DeploySourceToOrgImpl {
       console.log("Validation Ignore not found, using .forceignore");
     }
 
-    let command = await this.buildExecCommand();
-    let result = child_process.execSync(command, {
-      cwd: this.project_directory,
-      encoding: "utf8"
-    });
-    tl.debug(result);
-    let resultAsJSON = JSON.parse(result);
-    let deploy_id = resultAsJSON.result.id;
+    //Get Deploy ID
+    let deploy_id = "";
+    try {
+      let command = await this.buildExecCommand();
+      console.log(command);
+      let result = child_process.execSync(command, {
+        cwd: this.project_directory,
+        encoding: "utf8"
+      });
 
-    tl.setVariable("sfpowerkit_deploysource_id", deploy_id);
+      let resultAsJSON = JSON.parse(result);
+      deploy_id = resultAsJSON.result.id;
+    } catch (error) {
+      deploySourceResult.result = false;
+      deploySourceResult.message = JSON.parse(error.stdout).message;
+      return deploySourceResult;
+    }
 
     if (this.deployment_options["checkonly"])
       console.log(
@@ -87,6 +86,8 @@ export default class DeploySourceToOrgImpl {
         `Deployment is in progress....  Unleashing the power of your code!`
       );
 
+    // Loop till deployment completes to show status
+    let result;
     while (true) {
       try {
         result = child_process.execSync(
@@ -98,7 +99,9 @@ export default class DeploySourceToOrgImpl {
           }
         );
       } catch (err) {
-        console.log(`Validation/Deployment Failed`);
+        if (this.deployment_options["checkonly"])
+          console.log(`Validation Failed`);
+        else console.log(`Deployment Failed`);
         break;
       }
       let resultAsJSON = JSON.parse(result);
@@ -123,20 +126,81 @@ export default class DeploySourceToOrgImpl {
       await delay(30000);
     }
 
-    let child = child_process.exec(
-      `npx sfdx force:mdapi:deploy:report  -i ${deploy_id} -u ${this.target_org}`,
-      { cwd: this.project_directory, encoding: "utf8" },
-      (error, stdout, stderr) => {}
-    );
+    deploySourceResult.message = await this.getFinalDeploymentStatus(deploy_id);
+    deploySourceResult.result = commandExecStatus;
+    deploySourceResult.deploy_id = deploy_id;
+    return deploySourceResult;
+  }
 
-    child.stdout.on("data", data => {
-      console.log(data.toString());
-    });
-    child.stderr.on("data", data => {
-      console.log(data.toString());
-    });
+  private isToBreakBuildForEmptyDirectory(): {
+    message: string;
+    result: string;
+  } {
+    let directoryToCheck;
+    let status: { message: string; result: string } = {
+      message: "",
+      result: ""
+    };
 
-    await onExit(child);
+    if (!isNullOrUndefined(this.project_directory)) {
+      directoryToCheck = path.join(
+        this.project_directory,
+        this.source_directory
+      );
+    } else directoryToCheck = this.source_directory;
+
+    try {
+      if (!existsSync(directoryToCheck)) {
+        //Folder do not exists, break build
+        if (this.isToBreakBuildIfEmpty) {
+          status.message = `Folder not Found , Stopping build as isToBreakBuildIfEmpty is ${this.isToBreakBuildIfEmpty}`;
+          status.result = "break";
+        } else {
+          status.message = `Folder not Found , Skipping task as isToBreakBuildIfEmpty is ${this.isToBreakBuildIfEmpty}`;
+          status.result = "skip";
+        }
+        return status;
+      } else if (this.isEmptyFolder(directoryToCheck)) {
+        if (this.isToBreakBuildIfEmpty) {
+          status.message = `Folder is Empty , Stopping build as isToBreakBuildIfEmpty is ${this.isToBreakBuildIfEmpty}`;
+          status.result = "break";
+        } else {
+          status.message = `Folder is Empty, Skipping task as isToBreakBuildIfEmpty is ${this.isToBreakBuildIfEmpty}`;
+          status.result = "skip";
+        }
+        return status;
+      } else {
+        status.result = "continue";
+        return status;
+      }
+    } catch (err) {
+      if (!this.isToBreakBuildIfEmpty) {
+        status.message = `Something wrong with the path provided  ${directoryToCheck},,but skipping `;
+        status.result = "skip";
+        return status;
+      } else throw err;
+    }
+  }
+
+  private async getFinalDeploymentStatus(deploy_id: string): Promise<string> {
+    let messageString = "";
+    try {
+      //Print final output
+      let child = child_process.exec(
+        `npx sfdx force:mdapi:deploy:report  -i ${deploy_id} -u ${this.target_org}`,
+        { cwd: this.project_directory, encoding: "utf8" },
+        (error, stdout, stderr) => {}
+      );
+
+      child.stdout.on("data", data => {
+        messageString += data.toString();
+      });
+
+      await onExit(child);
+      return messageString;
+    } catch (err) {
+      return messageString;
+    }
   }
 
   private async buildExecCommand(): Promise<string> {
@@ -147,7 +211,7 @@ export default class DeploySourceToOrgImpl {
     if (this.deployment_options["checkonly"]) command += ` -c`;
 
     //directory
-    command += ` -d mdapi`;
+    command += ` -d sfpowerscripts_mdapi`;
 
     //testlevel
     command += ` -l ${this.deployment_options["testlevel"]}`;
@@ -164,9 +228,6 @@ export default class DeploySourceToOrgImpl {
       apexclasses = this.deployment_options["specified_tests"];
       command += ` -r ${apexclasses}`;
     }
-
-    tl.debug("Generated Command");
-    tl.debug(command);
 
     return command;
   }
@@ -195,7 +256,7 @@ export default class DeploySourceToOrgImpl {
           `Converting to Source Format ${this.source_directory} in project directory`
         );
       child_process.execSync(
-        `npx sfdx force:source:convert -r ${this.source_directory}  -d  mdapi`,
+        `npx sfdx force:source:convert -r ${this.source_directory}  -d  sfpowerscripts_mdapi`,
         { cwd: this.project_directory, encoding: "utf8" }
       );
       console.log("Converting to Source Format Completed");
