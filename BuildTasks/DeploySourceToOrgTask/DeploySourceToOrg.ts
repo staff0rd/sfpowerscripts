@@ -1,7 +1,10 @@
 import tl = require("azure-pipelines-task-lib/task");
 import child_process = require("child_process");
-import DeploySourceToOrgImpl from "./DeploySourceToOrgImpl";
+import DeploySourceToOrgImpl, {
+  DeploySourceResult
+} from "./DeploySourceToOrgImpl";
 import { AppInsights } from "../Common/AppInsights";
+import { isNullOrUndefined } from "util";
 
 async function run() {
   try {
@@ -11,20 +14,21 @@ async function run() {
     const project_directory: string = tl.getInput("project_directory", false);
     const source_directory: string = tl.getInput("source_directory", true);
 
-    AppInsights.setupAppInsights(tl.getBoolInput("isTelemetryEnabled",true));
-
+    AppInsights.setupAppInsights(tl.getBoolInput("isTelemetryEnabled", true));
 
     let deploySourceToOrgImpl: DeploySourceToOrgImpl;
     let mdapi_options = {};
 
     mdapi_options["wait_time"] = tl.getInput("wait_time", true);
     mdapi_options["checkonly"] = tl.getBoolInput("checkonly", true);
-    
 
-    AppInsights.setupAppInsights(tl.getBoolInput("isTelemetryEnabled",true));
-    
-   if(mdapi_options["checkonly"])
-   mdapi_options["validation_ignore"]=tl.getInput("validation_ignore",false);
+    AppInsights.setupAppInsights(tl.getBoolInput("isTelemetryEnabled", true));
+
+    if (mdapi_options["checkonly"])
+      mdapi_options["validation_ignore"] = tl.getInput(
+        "validation_ignore",
+        false
+      );
 
     mdapi_options["testlevel"] = tl.getInput("testlevel", true);
 
@@ -33,25 +37,42 @@ async function run() {
     if (mdapi_options["testlevel"] == "RunApexTestSuite")
       mdapi_options["apextestsuite"] = tl.getInput("apextestsuite", true);
 
-    
-   
-      let isToBreakBuildIfEmpty= tl.getBoolInput("isToBreakBuildIfEmpty",true)
-   
-      deploySourceToOrgImpl = new DeploySourceToOrgImpl(
+    let isToBreakBuildIfEmpty = tl.getBoolInput("isToBreakBuildIfEmpty", true);
+
+    deploySourceToOrgImpl = new DeploySourceToOrgImpl(
       target_org,
       project_directory,
       source_directory,
       mdapi_options,
       isToBreakBuildIfEmpty
     );
-    await deploySourceToOrgImpl.exec();
+    let result: DeploySourceResult = await deploySourceToOrgImpl.exec();
+
+    if (!isNullOrUndefined(result.deploy_id)) {
+      tl.setVariable("sfpowerkit_deploysource_id", result.deploy_id);
+    }
+
+    if (!result.result) {
+      console.error(result.message);
+
+     tl.error(result.message);
+
+      tl.setResult(
+        tl.TaskResult.Failed,
+        `Validation/Deployment with Job ID ${result.deploy_id} failed`
+      );
+    } else {
+      console.log(result.message);
+      tl.setResult(tl.TaskResult.Succeeded, result.message);
+    }
 
     AppInsights.trackTask("sfpowerscript-deploysourcetoorg-task");
-    AppInsights.trackTaskEvent("sfpowerscript-deploysourcetoorg-task","source_deployed");    
-
-
+    AppInsights.trackTaskEvent(
+      "sfpowerscript-deploysourcetoorg-task",
+      "source_deployed"
+    );
   } catch (err) {
-    AppInsights.trackExcepiton("sfpowerscript-deploysourcetoorg-task",err);
+    AppInsights.trackExcepiton("sfpowerscript-deploysourcetoorg-task", err);
     tl.setResult(tl.TaskResult.Failed, err.message);
   }
 }
