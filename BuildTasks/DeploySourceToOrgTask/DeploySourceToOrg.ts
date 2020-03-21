@@ -55,9 +55,7 @@ async function run() {
     if (!result.result) {
       console.error(result.message);
 
-      result.message.split("\n").forEach(line => {
-        tl.error(line);
-      });
+     tl.error(result.message);
 
       tl.setResult(
         tl.TaskResult.Failed,
