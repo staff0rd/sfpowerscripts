@@ -74,7 +74,7 @@ jobs:
             target_org: 'scratchorg'
             devhub_alias: 'HubOrg'
          
-        - task: sfpowerscript-deploysourcetoorg-task@5
+        - task: sfpowerscript-deploysourcetoorg-task@6
           displayName: Deploy to  Scratch Org
           inputs:
             target_org: 'scratchorg'
