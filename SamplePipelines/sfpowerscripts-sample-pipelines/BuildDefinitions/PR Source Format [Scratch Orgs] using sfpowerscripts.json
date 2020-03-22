@@ -165,7 +165,7 @@
             "condition": "succeeded()",
             "task": {
               "id": "dea3a185-c3f5-44a8-841b-1e5044864778",
-              "versionSpec": "5.*",
+              "versionSpec": "6.*",
               "definitionType": "task"
             },
             "inputs": {
