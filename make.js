@@ -148,8 +148,10 @@ target.publish = function() {
   } 
   else if (options.stage == "beta") {
 
-
-    updateExtensionManifest(__dirname, options, false);
+    var manifestPath = path.join(__dirname, "vss-extension.json");
+    var manifest = JSON.parse(fs.readFileSync(manifestPath));
+    options.version = manifest.version;
+  
     console.log(`version found ${version}`);
     console.log(`Package Path found ${packagesPath}`);
 
@@ -158,7 +160,7 @@ target.publish = function() {
       'tfx extension publish --vsix "' +
         packagesPath +
         "/AzlamSalam.sfpowerscripts-beta-" +
-        version +
+       options.version +
         '.vsix"' +
         " --share-with "+options.organization+" --token " +
         options.token
