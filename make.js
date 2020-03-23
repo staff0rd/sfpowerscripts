@@ -118,7 +118,7 @@ target.incrementversion = function() {
     case "beta":
       options.public = false;
       updateExtensionManifest(__dirname, options, false);
-     // tl.updateBuildNumber(options.version);
+      tl.updateBuildNumber(options.version);
       break;
     case "review":
       options.public = false;
@@ -218,7 +218,6 @@ updateExtensionManifest = function(dir, options, isOriginalFile) {
     manifest.id = "sfpowerscripts" + "-" + "beta";
     manifest.name = "sfpowerscripts" + " (" + "beta" + ")";
     manifest.public = false;
-    version = manifest.version;
   } 
   else {
     manifest.id = "sfpowerscripts";
