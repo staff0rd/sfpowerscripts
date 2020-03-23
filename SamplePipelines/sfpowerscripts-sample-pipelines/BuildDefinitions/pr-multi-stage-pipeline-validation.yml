@@ -63,7 +63,7 @@ stages:
         daystomanintain: 1,
         isTelemetryEnabled: true
 
-    - task: sfpowerscript-deploysourcetoorg-task@3
+    - task: sfpowerscript-deploysourcetoorg-task@6
       displayName: Deploy source to scratch org
       inputs:
         target_org: 'MyScratchOrg'
@@ -73,7 +73,7 @@ stages:
         testlevel: 'NoTestRun'
         isTelemetryEnabled: true
 
-    - task: sfpwowerscript-triggerapextest-task@3
+    - task: sfpwowerscript-triggerapextest-task@4
       displayName: Run Apex Unit Tests
       inputs:
         target_org: 'MyScratchOrg'
