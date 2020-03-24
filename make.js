@@ -1,7 +1,7 @@
 // parse command line options
 var minimist = require("minimist");
 var mopts = {
-  string: ["version", "stage", "taskId","organization","buildNumber"],
+  string: ["version", "stage", "taskId", "organization", "buildNumber"],
   boolean: ["public"]
 };
 
@@ -27,8 +27,6 @@ var assetPath = path.join(__dirname, "static");
 var widgetsPath = path.join(__dirname, "Widgets");
 var binariesPath = path.join(__dirname, "build");
 var packagesPath = path.join(__dirname, "dist");
-
-var version;
 
 // make targets
 target.clean = function() {
@@ -75,152 +73,91 @@ target.incrementversion = function() {
   var manifestPath = path.join(__dirname, "vss-extension.json");
   var manifest = JSON.parse(fs.readFileSync(manifestPath));
 
-  if (options.version) {
-    if (options.version === "auto") {
-      var ref = new Date(2000, 1, 1);
-      var now = new Date();
-      var major = semver.major(manifest.version);
-      var minor = Math.floor((now - ref) / 86400000);
-      var patch = Math.floor(
-        Math.floor(
-          now.getSeconds() + 60 * (now.getMinutes() + 60 * now.getHours())
-        ) * 0.5
-      );
-      options.version = major + "." + minor + "." + patch;
-    } else if (options.version === "review") {
-      //Treat patch as the build number, let major and minor be developer controlled
-      var major = semver.major(manifest.version);
-      var minor = semver.minor(manifest.version);
-      var patch = semver.patch(manifest.version);
-      patch = options.buildNumber;
-      options.version = major + "." + minor + "." + patch;
-    }
-    else if (options.version === "beta" || options.version === "prod") {
-      var major = semver.major(manifest.version);
-      var minor = semver.minor(manifest.version);
-      var patch = semver.patch(manifest.version);
-      patch = options.buildNumber
-      options.version = major + "." + minor + "." + patch;
-    }
-
-    if (!semver.valid(options.version)) {
-      console.error("package", "Invalid semver version: " + options.version);
-      process.exit(1);
-    }
+  if (options.stage === "dev") {
+    var ref = new Date(2000, 1, 1);
+    var now = new Date();
+    var major = semver.major(manifest.version);
+    var minor = Math.floor((now - ref) / 86400000);
+    var patch = Math.floor(
+      Math.floor(
+        now.getSeconds() + 60 * (now.getMinutes() + 60 * now.getHours())
+      ) * 0.5
+    );
+    options.version = major + "." + minor + "." + patch;
+    options.public = false;
+  } else {
+    //Treat patch as the build number, let major and minor be developer controlled
+    var major = semver.major(manifest.version);
+    var minor = semver.minor(manifest.version);
+    options.version = major + "." + minor + "." + options.buildNumber;
   }
-
-  switch (options.stage) {
-    case "dev":
-      options.public = false;
-      updateExtensionManifest(__dirname, options, false);
-      tl.updateBuildNumber(options.version);
-      break;
-    case "beta":
-      options.public = false;
-      updateExtensionManifest(__dirname, options, false);
-     // tl.updateBuildNumber(options.version);
-      break;
-    case "review":
-      options.public = false;
-      updateExtensionManifest(__dirname, options, false);
-      tl.updateBuildNumber(options.version);
-      break;
-    default:
-      updateExtensionManifest(__dirname, options, true);
-  }
+  updateExtensionManifest(__dirname, options);
+  tl.updateBuildNumber(options.version);
 };
 
 target.publish = function() {
   console.log("publish: publish task");
 
+  var manifestPath = path.join(__dirname, "vss-extension.json");
+  var manifest = JSON.parse(fs.readFileSync(manifestPath));
+
+
   console.log(options);
 
-  if (options.stage == "dev") {
-    shell.exec(
-      'tfx extension publish --vsix "' +
-        packagesPath +
-        "/AzlamSalam.sfpowerscripts-dev-" +
-        options.version +
-        '.vsix"' +
-        " --share-with "+options.organization+" --token " +
-        options.token
-    );
-  } 
-  else if (options.stage == "beta") {
-
-
-    updateExtensionManifest(__dirname, options, false);
-    console.log(`version found ${version}`);
-    console.log(`Package Path found ${packagesPath}`);
-
-
-    shell.exec(
-      'tfx extension publish --vsix "' +
-        packagesPath +
-        "/AzlamSalam.sfpowerscripts-beta-" +
-        version +
-        '.vsix"' +
-        " --share-with "+options.organization+" --token " +
-        options.token
-    );
-  } 
-  else if (options.stage == "review") {
-    //Reading current versions from manifest
-    var manifestPath = path.join(__dirname, "vss-extension.json");
-    var manifest = JSON.parse(fs.readFileSync(manifestPath));
-    options.version = manifest.version;
-
-    shell.exec(
-      'tfx extension publish --vsix "' +
-        packagesPath +
-        "/AzlamSalam.sfpowerscripts-review-" +
-        options.version +
-        '.vsix"' +
-        " --share-with "+options.organization+" --token " +
-        options.token
-    );
-  } else {
-    updateExtensionManifest(__dirname, options, true);
-    console.log(`version found ${version}`);
-    console.log(`Package Path found ${packagesPath}`);
-
+  if (options.stage == "prod") {
     shell.exec(
       'tfx extension publish --vsix "' +
         packagesPath +
         "/AzlamSalam.sfpowerscripts-" +
-        version +
+        manifest.version +
         '.vsix"' +
+        " --token " +
+        options.token
+    );
+  } else {
+    shell.exec(
+      'tfx extension publish --vsix "' +
+        packagesPath +
+        "/AzlamSalam.sfpowerscripts-" +
+        options.stage +
+        "-" +
+        manifest.version +
+        '.vsix"' +
+        " --share-with " +
+        options.organization +
         " --token " +
         options.token
     );
   }
 };
 
-updateExtensionManifest = function(dir, options, isOriginalFile) {
+updateExtensionManifest = function(dir, options) {
+  var version = "";
   console.log(`Setting Version to  ${options.version}`);
 
   var manifestPath = path.join(dir, "vss-extension.json");
   var manifest = JSON.parse(fs.readFileSync(manifestPath));
 
-  if (options.stage == "dev" && !isOriginalFile) {
+  if (options.stage == "dev") {
     manifest.version = options.version;
     manifest.id = "sfpowerscripts" + "-" + "dev";
     manifest.name = "sfpowerscripts" + " (" + "dev" + ")";
     manifest.public = false;
     manifest.baseUri = "https://localhost:3000/build/";
-  } else if (options.stage == "review" && !isOriginalFile) {
+    version = options.version;
+  } else if (options.stage == "review") {
     manifest.version = options.version;
     manifest.id = "sfpowerscripts" + "-" + "review";
     manifest.name = "sfpowerscripts" + " (" + "review" + ")";
     manifest.public = false;
-  } 
-  else if (options.stage == "beta" && !isOriginalFile) {
+    version = options.version;
+  } else if (options.stage == "beta") {
+    manifest.version = options.version;
     manifest.id = "sfpowerscripts" + "-" + "beta";
     manifest.name = "sfpowerscripts" + " (" + "beta" + ")";
     manifest.public = false;
-    version = manifest.version;
-  } 
-  else {
+    version = options.version;
+  } else {
     manifest.id = "sfpowerscripts";
     manifest.name = "sfpowerscripts";
     manifest.public = true;
@@ -228,33 +165,10 @@ updateExtensionManifest = function(dir, options, isOriginalFile) {
   }
 
   fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 4));
+  console.log("Calculated Version " + version);
+  return version;
 };
 
-updateTaskManifest = function(dir, options, isOriginalFile) {
-  var tasksPath = path.join(dir, "BuildTasks");
-  var tasks = fs.readdirSync(tasksPath);
-  console.log(tasks.length + " tasks found.");
-  tasks.forEach(function(task) {
-    var manifestPath = path.join(tasksPath, task, "task.json");
-
-    if (fs.existsSync(manifestPath)) {
-      console.log(manifestPath);
-      var manifest = JSON.parse(fs.readFileSync(manifestPath));
-
-      if (options.stage && !isOriginalFile) {
-        manifest.friendlyName = manifest.friendlyName + " (" + options.stage;
-
-        if (options.version) {
-          manifest.friendlyName = manifest.friendlyName + " " + options.version;
-        }
-
-        manifest.friendlyName = manifest.friendlyName + ")";
-      }
-
-      fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 4));
-    }
-  });
-};
 
 copyRecursiveSync = function(src, dest) {
   var exists = fs.existsSync(src);

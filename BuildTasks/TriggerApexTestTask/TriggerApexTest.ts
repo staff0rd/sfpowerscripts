@@ -24,11 +24,11 @@ async function run() {
       test_options["apextestsuite"] = tl.getInput("apextestsuite", true);
 
     let taskType = tl.getVariable("Release.ReleaseId") ? "Release" : "Build";
-    let stagingDir: string = "staging";
+    let stagingDir: string = "";
 
     if (taskType == "Build") {
       stagingDir = path.join(
-        tl.getVariable("build.artifactStagingDirectory"),
+        tl.getVariable("build.artifactStagingDirectory")?tl.getVariable("build.artifactStagingDirectory"):"staging",
         ".testresults"
       );
 
@@ -48,12 +48,8 @@ async function run() {
     let result = await triggerApexTestImpl.exec();
 
     if (!result.result) {
-      console.error(result.message);
-      tl.error(result.message);
-
       tl.setResult(tl.TaskResult.Failed, result.message);
     } else {
-      console.log(result.message);
       tl.setResult(tl.TaskResult.Succeeded, result.message);
     }
 

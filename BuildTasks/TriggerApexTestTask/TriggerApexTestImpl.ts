@@ -1,5 +1,6 @@
 import child_process = require("child_process");
 import { onExit } from "../Common/OnExit";
+import { fail } from "assert";
 let fs = require("fs-extra");
 let path = require("path");
 
@@ -11,6 +12,8 @@ export default class TriggerApexTestImpl {
     result: boolean;
     message: string;
   }> {
+
+
     let test_result: { id: string; result: boolean; message: string } = {
       id: "",
       result: false,
@@ -18,6 +21,7 @@ export default class TriggerApexTestImpl {
     };
 
     let output = "";
+    let error = ""
     try {
       //Print final output
       let child = child_process.exec(
@@ -32,12 +36,19 @@ export default class TriggerApexTestImpl {
       child.stdout.on("data", data => {
         output += data.toString();
       });
+      child.stderr.on("data", data => {
+        error += data.toString();
+      });
 
       await onExit(child);
     } catch (err) {
-      //Do nothing
-      console.log(err.code);
+      
+      test_result.result =false;
+      test_result.message=error;
+      return test_result;
     }
+
+    console.log(output);
 
     try {
       let test_id = fs
@@ -46,7 +57,7 @@ export default class TriggerApexTestImpl {
         )
         .toString();
 
-      console.log(test_id);
+      console.log('test_id',test_id);
 
       let test_report_json_file = fs
         .readFileSync(
