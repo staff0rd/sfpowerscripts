@@ -1,9 +1,9 @@
 {
     "manifestVersion": 1,
-    "id": "sfpowerscripts-beta",
+    "id": "sfpowerscripts-review",
     "publisher": "AzlamSalam",
-    "name": "sfpowerscripts (beta)",
-    "version": "11.0.0",
+    "name": "sfpowerscripts (review)",
+    "version": "11.0.32",
     "description": "Azure Pipelines tasks for working with Salesforce",
     "tags": [
         "Extension",
@@ -459,5 +459,6 @@
                 "name": "BuildTasks/CreateDeltaPackageTask"
             }
         }
-    ]
+    ],
+    "baseUri": "https://localhost:3000/build/"
 }
