@@ -25,7 +25,7 @@ variables:
    value: 11
    
  - name: minor
-   value: $[counter(variables['major'], 30)]
+   value: $[counter(variables['major'], 200)] # Teporarily counter increased to 200 for issue with review builds
  
 
 

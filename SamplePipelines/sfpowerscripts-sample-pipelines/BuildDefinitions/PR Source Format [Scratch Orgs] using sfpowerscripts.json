@@ -192,7 +192,7 @@
             "condition": "succeeded()",
             "task": {
               "id": "2f57114d-c08b-4014-96d7-a8981a2dae9b",
-              "versionSpec": "3.*",
+              "versionSpec": "4.*",
               "definitionType": "task"
             },
             "inputs": {

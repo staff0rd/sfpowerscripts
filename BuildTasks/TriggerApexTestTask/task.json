@@ -7,9 +7,9 @@
     "category": "Build",
     "author": "azlam.abdulsalam",
     "version": {
-        "Major": 3,
-        "Minor": 2,
-        "Patch": 0
+        "Major": 4,
+        "Minor": 0,
+        "Patch": 6
     },
     "runsOn": [
         "Agent"
