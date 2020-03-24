@@ -1,6 +1,7 @@
 import child_process = require("child_process");
 import { onExit } from "../Common/OnExit";
 import { fail } from "assert";
+import { isNullOrUndefined } from "util";
 let fs = require("fs-extra");
 let path = require("path");
 
@@ -42,10 +43,7 @@ export default class TriggerApexTestImpl {
 
       await onExit(child);
     } catch (err) {
-      
-      test_result.result =false;
-      test_result.message=error;
-      return test_result;
+   
     }
 
     console.log(output);
@@ -93,7 +91,7 @@ export default class TriggerApexTestImpl {
       return test_result;
     } catch (err) {
       test_result.result = false;
-      test_result.message = err;
+      test_result.message = error;
       return test_result;
     }
   }
