@@ -86,7 +86,7 @@ jobs:
             isTelemetryEnabled: true
  
         
-        - task: sfpwowerscript-triggerapextest-task@3
+        - task: sfpwowerscript-triggerapextest-task@4
           displayName: Trigger Apex Test Task
           continueOnError: true
           inputs:
