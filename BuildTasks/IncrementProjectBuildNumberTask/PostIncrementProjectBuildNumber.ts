@@ -4,10 +4,26 @@ import simplegit from "simple-git/promise";
 
 async function run() {
   try {
+
+
+
+    
+    //#Bug fix for Issue #199 .. Support for backward compatiblity, where the push is still on an is hidden when appendBuildNumber is selected
+    const isappendBuildNumber =  tl.getBoolInput("appendBuildNumber", false);
+    if(isappendBuildNumber)
+    {
+        return;
+    }
+
+
+
     AppInsights.setupAppInsights(tl.getBoolInput("isTelemetryEnabled", true));
 
     const isPushChanges = tl.getBoolInput("pushchanges", false);
     const pushOption = tl.getInput("pushoption", false);
+
+
+
 
     let isToBePushed =
       pushOption == "onSuccess"
