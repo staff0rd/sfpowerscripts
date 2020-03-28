@@ -1,7 +1,14 @@
 import child_process = require("child_process");
 import { delay } from "../Common/Delay";
 import rimraf = require("rimraf");
-import { copyFile, copyFileSync, readdirSync, fstat, existsSync, stat } from "fs";
+import {
+  copyFile,
+  copyFileSync,
+  readdirSync,
+  fstat,
+  existsSync,
+  stat
+} from "fs";
 import { isNullOrUndefined } from "util";
 import { onExit } from "../Common/OnExit";
 let path = require("path");
@@ -28,22 +35,17 @@ export default class DeploySourceToOrgImpl {
     //Clean mdapi directory
     rimraf.sync("sfpowerscripts_mdapi");
 
-
     //Check empty conditions
     let status = this.isToBreakBuildForEmptyDirectory();
     if (status.result == "break") {
       deploySourceResult.result = false;
       deploySourceResult.message = status.message;
       return deploySourceResult;
-    }
-    else if(status.result=="skip")
-    {
+    } else if (status.result == "skip") {
       deploySourceResult.result = true;
       deploySourceResult.message = status.message;
       return deploySourceResult;
     }
-
-
 
     console.log("Converting source to mdapi");
     await this.convertSourceToMDAPI();
@@ -52,10 +54,11 @@ export default class DeploySourceToOrgImpl {
       if (this.deployment_options["checkonly"])
         copyFileSync(
           this.deployment_options["validation_ignore"],
-          this.project_directory
+          path.join(this.project_directory,'.forceignore')
         );
     } catch (err) {
       //Do something here
+      console.error(err);
       console.log("Validation Ignore not found, using .forceignore");
     }
 
@@ -213,20 +216,22 @@ export default class DeploySourceToOrgImpl {
     //directory
     command += ` -d sfpowerscripts_mdapi`;
 
-    //testlevel
-    command += ` -l ${this.deployment_options["testlevel"]}`;
-
     //add json
     command += ` --json`;
 
     if (this.deployment_options["testlevel"] == "RunApexTestSuite") {
+      //testlevel
+      command += ` -l RunSpecifiedTests`;
       apexclasses = await this.convertApexTestSuiteToListOfApexClasses(
         this.deployment_options["apextestsuite"]
       );
       command += ` -r ${apexclasses}`;
     } else if (this.deployment_options["testlevel"] == "RunSpecifiedTests") {
+      command += ` -l RunSpecifiedTests`;
       apexclasses = this.deployment_options["specified_tests"];
       command += ` -r ${apexclasses}`;
+    } else {
+      command += ` -l ${this.deployment_options["testlevel"]}`;
     }
 
     return command;
@@ -236,13 +241,22 @@ export default class DeploySourceToOrgImpl {
     apextestsuite: string
   ): Promise<string> {
     console.log(
-      "Converts an apex test suite to its consituent apex classes as a single line separated by commas"
+      `Converting an apex test suite  ${apextestsuite} to its consituent apex test classes`
     );
+
     let result = child_process.execSync(
-      `npx sfdx sfpowerkit:source:apextestsuite:convert  -n ${apextestsuite}`,
+      `npx sfdx sfpowerkit:source:apextestsuite:convert  -n ${apextestsuite} --json`,
       { cwd: this.project_directory, encoding: "utf8" }
     );
-    return result;
+
+    let resultAsJSON = JSON.parse(result);
+    if (resultAsJSON["status"] == 0) {
+      return resultAsJSON["result"];
+    } else {
+      throw new Error(
+        `Unable to convert apex test suite ${apextestsuite} ${resultAsJSON["message"]}`
+      );
+    }
   }
 
   private async convertSourceToMDAPI(): Promise<void> {
