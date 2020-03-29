@@ -20,7 +20,7 @@ Please note [Install SFDX with Sfpowerkit](/Tasks/Common-Utility-Tasks/Install%2
 
 id: sfpwowerscript-triggerapextest-task
 
-version: 3.2.0
+version: 4.0.6
 
 **Input Variables  - Visual Designer Labels (Yaml variables)**
 
@@ -69,8 +69,9 @@ None
 **Changelog**
 
 
-* 3.2.0 Fixes for Post Trigger Test Task
+* 4.0.6  Integration of Error Logs with Github
+* 3.2.0  Fixes for Post Trigger Test Task
 * 3.0.18 Bugfix for stdout buffer running out
 * 3.0.17 Updated with artifact upload and submitting test results in the test tab
-* 2.0.1 Updated with telemetry
-* 1.1.0 Initial Version
+* 2.0.1  Updated with telemetry
+* 1.1.0  Initial Version

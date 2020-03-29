@@ -26,7 +26,7 @@ Please note [Install SFDX with Sfpowerkit](/Tasks/Common-Utility-Tasks/Install%2
 
 id: sfpowerscript-deploysourcetoorg-task
 
-version: 5.1.0
+version: 6.0.6
 
 **Input Variables&nbsp; - Visual Designer Labels (Yaml variables)**
 
@@ -95,7 +95,7 @@ None
 
 **Changelog**
 
-* 6.0.6 Update with support for mono repo based multiple artifacts and multiple bug fixes
+* 6.0.6 Support for installation of packages of a build that generate multiple artifacts such as MonoRepo and Bugfixes
 * 5.1.0 Break Build if empty metadata is encountered
 * 3.0.1 Updated with Telemetry
 * 2.8.0 Initial Version

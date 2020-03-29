@@ -1,10 +1,10 @@
 ---
-title: Create a new version of SFDX Unlocked Package 
+title: Create a new version of Unlocked Package 
 category: Packaging Tasks
 order: 10
 ---
 
-This task is used to create a new version of a SFDX Unlocked Package. You can read more about unlocked packages [here](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_dev2gp.htm)
+This task is used to create a new version of a  Unlocked Package. You can read more about unlocked packages [here](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_dev2gp.htm)
 
 **Prerequisites**
 
@@ -18,7 +18,7 @@ Please note [Install SFDX with Sfpowerkit](/Tasks/Common-Utility-Tasks/Install%2
 
 id: sfpwowerscripts-createunlockedpackage-task
 
-version: 6.0.1
+version: 7.0.2
 
 **Input Variables&nbsp; - Visual Designer Labels (Yaml variables)**
 
@@ -87,8 +87,9 @@ Please ensure a package is created manually before utilizing this task, as this 
 
 **Changelog**
 
+* 7.0.2 Support for creation of multiple packages in a single build such as in a MonoRepo
 * 6.0.1 Skip Validation
-* 5\.1.2 Hotfix for Exception bug
-* 5\.0.1 Updated with Telemetry
-* 4\.0.0 Added Coverage Option
-* 3\.1.0 Initial Version
+* 5.1.2 Hotfix for Exception bug
+* 5.0.1 Updated with Telemetry
+* 4.0.0 Added Coverage Option
+* 3.1.0 Initial Version
