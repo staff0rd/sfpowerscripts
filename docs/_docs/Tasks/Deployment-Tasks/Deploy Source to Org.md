@@ -95,6 +95,7 @@ None
 
 **Changelog**
 
+* 6.0.6 Update with support for mono repo based multiple artifacts and multiple bug fixes
 * 5.1.0 Break Build if empty metadata is encountered
 * 3.0.1 Updated with Telemetry
 * 2.8.0 Initial Version
