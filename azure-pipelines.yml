@@ -12,11 +12,23 @@ pr:
     include:
     - develop
     - master
+  paths:
+    include:
+      - '*' 
+    exclude:
+      - 'docs/*' 
 
 trigger:
-  - feature/*
-  - hoftix/*
-  - bugfix/*
+  branches:
+    include:
+     - feature/*
+     - hoftix/*
+     - bugfix/*
+  paths:
+    include:
+    - '*' 
+    exclude:
+    - 'docs/*' 
 
 
 variables:
