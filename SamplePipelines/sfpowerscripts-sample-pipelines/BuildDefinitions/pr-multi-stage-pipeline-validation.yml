@@ -59,8 +59,8 @@ stages:
         config_file_path: 'config/default-scratch-def.json'
         alias: MyScratchOrg
         devhub_alias: DevHub
-        maintainorg: 'delete',
-        daystomanintain: 1,
+        maintainorg: 'delete'
+        daystomanintain: 1
         isTelemetryEnabled: true
 
     - task: sfpowerscript-deploysourcetoorg-task@6
@@ -78,7 +78,7 @@ stages:
       inputs:
         target_org: 'MyScratchOrg'
         testlevel: 'RunLocalTests'
-        wait_time: '60',
+        wait_time: '60'
         synchronous: false
         isTelemetryEnabled: true
 
